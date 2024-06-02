@@ -1,65 +1,95 @@
 #pragma once
-#define ID 16			// ID ë°°ì—´í¬ê¸°
-#define PW 20			// PW ë°°ì—´í¬ê¸°
-#define MAX 12			// ì´ë¦„ ë°°ì—´í¬ê¸°
-#define NUM 16			// ë²ˆí˜¸(ì „í™”ë²ˆí˜¸, ë“±ë¡ë²ˆí˜¸) ë°°ì—´í¬ê¸°
-#define RECORD 500		// ì§„ë£Œ ê¸°ë¡ ë°°ì—´í¬ê¸°
-#define LO 6			// ì§€ì—­ê³¼ ì½”ë“œ ë°°ì—´í¬ê¸°
+#define ID 20			// ID ¹è¿­Å©±â
+#define PW 20			// PW ¹è¿­Å©±â
+#define MAX 12			// ÀÌ¸§ ¹è¿­Å©±â
+#define NUM 16			// ¹øÈ£(ÀüÈ­¹øÈ£, µî·Ï¹øÈ£) ¹è¿­Å©±â
+#define RECORD 500		// Áø·á ±â·Ï ¹è¿­Å©±â
+#define LO 6			// Áö¿ª°ú ÄÚµå ¹è¿­Å©±â
 #define BUF_SIZE 100
-#include <time.h>
 
-typedef struct today {	// ë‚ ì§œ êµ¬ì¡°ì²´
-	int year;			// ë…„
-	int month;			// ì›”
-	int day;			// ì¼
-	int hour;			// ì‹œê°„
+char c;	// ¸ñ·Ï ÄÚµå
+char rc;	// ¼ö½Å¹ŞÀº ¸ñ·Ï ÄÚµå
+
+typedef struct today {	// ³¯Â¥ ±¸Á¶Ã¼
+	int year;					// ³â
+	int month;				// ¿ù
+	int day;					// ÀÏ
+	int hour;				// ½Ã°£
 }TODAY;
 
-typedef struct local {	// ì§€ì—­ êµ¬ì¡°ì²´
-	char city[LO];		// ì‹œ
-	char dong[LO];		// ë™
+typedef struct local {	// Áö¿ª ±¸Á¶Ã¼
+	char city[LO];			// ½Ã
+	char dong[LO];		// µ¿
 }LOCAL;
 
-typedef struct client {	// ê³ ê° êµ¬ì¡°ì²´
-	char name[MAX];		// ì´ë¦„
-	char num[NUM];		// ì „í™”ë²ˆí˜¸
-	char id[ID];		// ê³ ê°ID
+typedef struct client {	// °í°´ ±¸Á¶Ã¼
+	char name[MAX];		// ÀÌ¸§
+	char num[NUM];		// ÀüÈ­¹øÈ£
+	char id[ID];		// °í°´ID
 	char pw[PW];		// P.W
-	struct client* next;// ë‹¤ìŒ ë…¸ë“œ
+	struct client* next;// ´ÙÀ½ ³ëµå
 }CLIENT;
 
-typedef struct manager {// ê´€ë¦¬ì(ë³‘ì›) êµ¬ì¡°ì²´
-	char name[MAX];		// ë³‘ì›ëª…
-	LOCAL lo;			// ì§€ì—­ êµ¬ì¡°ì²´
-	char id[ID];		// ê´€ë¦¬ìID
+typedef struct manager {// °ü¸®ÀÚ(º´¿ø) ±¸Á¶Ã¼
+	char name[MAX];		// º´¿ø¸í
+	LOCAL lo;			// Áö¿ª ±¸Á¶Ã¼
+	char id[ID];		// °ü¸®ÀÚID
 	char pw[PW];		// P.W
-	struct manager* next;// ë‹¤ìŒ ë…¸ë“œ
+	struct manager* next;// ´ÙÀ½ ³ëµå
 }MANAGER;
 
-typedef struct animal {	// ë°˜ë ¤ë™ë¬¼ êµ¬ì¡°ì²´
-	char num[NUM];		// ë™ë¬¼ë“±ë¡ë²ˆí˜¸
-	TODAY bd;			// ìƒì¼ ë‚ ì§œ êµ¬ì¡°ì²´
-	char c_id[ID];		// ê³ ê°ID
-	struct animal* next;// ë‹¤ìŒ ë…¸ë“œ
+typedef struct animal {	// ¹İ·Áµ¿¹° ±¸Á¶Ã¼
+	char num[NUM];		// µ¿¹°µî·Ï¹øÈ£
+	TODAY bd;			// »ıÀÏ ³¯Â¥ ±¸Á¶Ã¼
+	char c_id[ID];		// °í°´ID
+	struct animal* next;// ´ÙÀ½ ³ëµå
 }ANIMAL;
 
-typedef struct mr {		// ì§„ë£Œ ê¸°ë¡ êµ¬ì¡°ì²´
-	char num[NUM];		// ë™ë¬¼ë“±ë¡ë²ˆí˜¸
-	TODAY date;			// ì§„ë£Œ ë‚ ì§œ
-	char mgName[MAX];	// ë³‘ì›ëª…
-	char record[RECORD];// ê¸°ë¡
-	struct mr* next;	// ë‹¤ìŒ ë…¸ë“œ
+typedef struct mr {		// Áø·á ±â·Ï ±¸Á¶Ã¼
+	char num[NUM];		// µ¿¹°µî·Ï¹øÈ£
+	TODAY date;			// Áø·á ³¯Â¥
+	char mgName[MAX];	// º´¿ø¸í
+	char record[RECORD];// ±â·Ï
+	struct mr* next;	// ´ÙÀ½ ³ëµå
 }MR;
 
-typedef struct reser {	// ì˜ˆì•½.ì ‘ì¢… ê´€ë¦¬ êµ¬ì¡°ì²´
-	char c_id[ID];		// ê³ ê°ID
-	char mg_id[ID];		// ê´€ë¦¬ì(ë³‘ì›)ID
-	char num[NUM];		// ë™ë¬¼ë“±ë¡ë²ˆí˜¸
-	TODAY date;			// ì˜ˆì•½.ì ‘ì¢…ë‚ ì§œ
-	char cord[LO];		// ì˜ˆì•½.ì ‘ì¢… ë¶„ë¥˜ ì½”ë“œ
-	struct reser* next;	// ë‹¤ìŒ ë…¸ë“œ
+typedef struct reser {	// ¿¹¾à.Á¢Á¾ °ü¸® ±¸Á¶Ã¼
+	char c_id[ID];		// °í°´ID
+	char mg_id[ID];		// °ü¸®ÀÚ(º´¿ø)ID
+	char num[NUM];		// µ¿¹°µî·Ï¹øÈ£
+	TODAY date;			// ¿¹¾à.Á¢Á¾³¯Â¥
+	char cord[LO];		// ¿¹¾à.Á¢Á¾ ºĞ·ù ÄÚµå
+	struct reser* next;	// ´ÙÀ½ ³ëµå
 }RESER;
 
-struct tm* todayDate();
+TODAY today;
+CLIENT client;
+MANAGER manager;
+ANIMAL animal;
+MR mr;
+RESER reser;
 
-void myRecode1(char aniNum);
+WSADATA wsaData;
+SOCKET sock;
+SOCKADDR_IN serverAddr;
+HANDLE sendThread, recvThread;
+
+			
+char id, pw;		// ·Î±×ÀÎÇÏ·Á´Â id, pw
+char join;
+char animNum;
+
+void gotoxy(int x, int y);
+
+void todayDate();
+
+void myRecode1();
+
+void myRecode2();
+
+void reservationDate();
+
+void reservationDerails();
+
+void editInformation();
+

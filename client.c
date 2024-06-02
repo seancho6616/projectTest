@@ -1,82 +1,160 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
-#include <windows.h>
+#include <winsock2.h>
+#include <process.h>
+#include <Windows.h>
+#include <string.h>
+#include <time.h>
 #include "client.h"
 
-struct tm* todayDate(){     // ì˜¤ëŠ˜ ë‚ ì§œ í•¨ìˆ˜
-    time_t *curr;
+//c = "l";
+
+void gotoxy(int x, int y) {
+    COORD pos = { x,y };
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+}
+
+void todayDate() {     // ¿À´Ã ³¯Â¥ ÇÔ¼ö
+    time_t* curr;
     curr = time(NULL);
-    return localtion(&curr);
+    struct tm* d;
+    d = localtime(&curr);
+    today.year = d->tm_year + 1900;
+    today.month = d->tm_mon+1;
+    today.day = d->tm_mday;
+    today.hour = d->tm_hour;
 }
 
-void myRecode1(char c_id){  // í•´ë‹¹ ê³ ê° ë°˜ë ¤ë™ë¬¼ ëª©ë¡ ë¶ˆëŸ¬ì˜¤ëŠ” í•¨ìˆ˜
-    //ì†Œì¼“ìœ¼ë¡œ ì „ë‹¬
-    char anim[5][2];
-
-    for(int i=0; i<5; i++){
-        printf("ë²ˆí˜¸ : %s\tì´ë¦„ : %s\n", anim[i][0], anim[i][1]);
-    }    
-}
-
-void myRecode2(char animNum){
-    // ì†Œì¼“ìœ¼ë¡œ ì „ë‹¬
-
-}
-
-void reservationDate(TODAY d){
-    char date[20];
-    sprintf(date, "%d@%d@%d@%d", d.year, d.month, d.day, d.hour);
-
-    while(1){
-
-    } 
-
-    printf("%d");
-}
-
-void hospitalRecode(){
-    
-}
-
-void anumalNum(ANIMAL infor){
-    char i[40];
-    sprintf(i, "%s@%s@%s@%s@%s",
-    infor.num, infor.bd.year, infor.bd.month, infor.bd.day, infor.c_id);
-}
-
-unsigned WINAPI SendMsg(void* arg){//ì „ì†¡ìš© ì“°ë ˆë“œí•¨ìˆ˜
-    SOCKET sock=*((SOCKET*)arg);//ì„œë²„ìš© ì†Œì¼“ì„ ì „ë‹¬í•œë‹¤.
-    char msg[BUF_SIZE]="";
-    gets(msg);//ì…ë ¥ì„ ë°›ëŠ”ë‹¤.
-    if(!strcmp(msg,"q")){//që¥¼ ì…ë ¥í•˜ë©´ ì¢…ë£Œí•œë‹¤.
-        send(sock,"q",1,0);//nameMsgë¥¼ ì„œë²„ì—ê²Œ ì „ì†¡í•œë‹¤.
-        strcpy(msg, "");
+void myRecode1() {  // ÇØ´ç °í°´ ¹İ·Áµ¿¹° ¸ñ·Ï ºÒ·¯¿À´Â ÇÔ¼ö
+    system("cls");
+    c = "p1";
+    gotoxy(3, 1);
+    printf("Áø·á ±â·Ï È®ÀÎ");
+    gotoxy(40, 1);
+    printf("%d-%d-%d", today.year, today.month, today.day);
+    for (int i = 0; i < 50; i++) {
+        printf("=");
     }
-    else{
-        send(sock,msg,strlen(msg),0);
-        strcpy(msg, "");
+    gotoxy(2, 3);
+    printf("* ¸í´Ü\n\n");
+}
+
+void myRecode2() {
+    system("cls");
+    c = "p2";
+    gotoxy(3, 1);
+    printf("Áø·á ±â·Ï È®ÀÎ");
+    gotoxy(40, 1);
+    printf("%d-%d-%d", today.year, today.month, today.day);
+    for (int i = 0; i < 50; i++) {
+        printf("=");
+    }
+    gotoxy(2, 3);
+    printf("* %s", animNum);
+}
+
+void reservationDate() {    // ¿¹¾à ³¯Â¥ È®ÀÎ(´Ù°¡¿À´Â ¿¹¾à ³¯Â¥)
+    c = "c1";
+}
+
+void reservationDerails() { // ¿¹¾à ³»¿ª È®ÀÎ
+    system("cls");
+    c = "c2";
+    gotoxy(3, 4);
+    printf("¿¹¾à ³»¿ª È®ÀÎ");
+    gotoxy(40, 4);
+    printf("%d-%d-%d", today.year, today.month, today.day);
+    for (int i = 0; i < 50; i++) {
+        printf("=");
+    }
+}
+
+void editInformation() {
+    c = "p3";
+}
+//
+//void reservationDate(TODAY d) {
+//    char date[20];
+//    sprintf(date, "%d@%d@%d@%d", d.year, d.month, d.day, d.hour);
+//
+//    while (1) {
+//
+//    }
+//
+//    printf("%d");
+//}
+//
+//void hospitalRecode() {
+//
+//}
+//
+//void anumalNum(ANIMAL infor) {
+//    char i[40];
+//    sprintf(i, "%s@%s@%s@%s@%s",
+//        infor.num, infor.bd.year, infor.bd.month, infor.bd.day, infor.c_id);
+//}
+//
+unsigned WINAPI SendMsg(void* arg) {//Àü¼Û¿ë ¾²·¹µåÇÔ¼ö
+    while (1) {
+        switch (c) {
+            case 'l':
+                send(sock, c, 2, 0);
+                char loin; // ·Î±×ÀÎ½Ã ¼­¹ö·Î ³Ñ±â±â À§ÇÑ º¯¼ö(id, pw¸¦ »ğÀÔ)
+                gets("%s", id);
+                gets("%s", pw);
+                sprintf(loin, "%s@%s", id, pw);
+                send(sock, loin, strlen(loin), 0);
+                break;
+            case 'jc':
+                send(sock, c, 2, 0);
+                sprintf(join, "%s@%s@%s@%s", 
+                    client.name, client.num, client.id, client.pw);
+                send(sock, join, strlen(join), 0);
+                c = "l";
+                break;
+            case 'jm':
+                send(sock, c, 2, 0);
+                sprintf(join, "%s@%s@%s@%s", 
+                    manager.name, manager.lo.city, manager.lo.dong, manager.id, manager.pw);
+                send(sock, join, strlen(join), 0);
+                c = "l";
+                break;
+            case 'p1':
+                send(sock, c, 2, 0); // c ="p1" -> ¼­¹ö
+                send(sock, client.id, strlen(client.id), 0);
+                break;
+            case 'p2':
+                send(sock, c, 2, 0);
+                send(sock, animNum, strlen(animNum), 0);
+                break;
+            case 'c1':
+                send(sock, c, 2, 0);
+                char date;
+                sprintf(date, "%d@%d@%d@%d",
+                    today.year, today.month, today.day, today.hour);
+                send(sock, date, strlen(date), 0);
+        }
     }
     return 0;
 }
 
-unsigned WINAPI RecvMsg(void* arg){// ì†Œì¼“sendí•¨ìˆ˜
-    SOCKET sock=*((SOCKET*)arg);//ì„œë²„ìš© ì†Œì¼“ì„ ì „ë‹¬í•œë‹¤.
-    char msg[BUF_SIZE]="";
-    int strLen;
-    while(1){//ë°˜ë³µ
-        strLen=recv(sock,msg,BUF_SIZE-1,0);//ì„œë²„ë¡œë¶€í„° ë©”ì‹œì§€ë¥¼ ìˆ˜ì‹ í•œë‹¤.
-        if(strLen==-1) return -1;
-        msg[strLen]='\0';//ë¬¸ìì—´ì˜ ëì„ ì•Œë¦¬ê¸° ìœ„í•´ ì„¤ì •
-        if(!strcmp(msg,"q")){
-            printf("left\n");
-            closesocket(sock);
-            exit(0);
-        }
-        else{
-            printf("Result : %s\n", msg);
-        }
-        strcpy(msg, "");
-    }
-    return 0;
-} 
-
+//unsigned WINAPI RecvMsg(void* arg) {// ¼ÒÄÏsendÇÔ¼ö
+//    int strLen;
+//    while (1) {//¹İº¹
+//        strLen = recv(sock, msg, BUF_SIZE - 1, 0);//¼­¹ö·ÎºÎÅÍ ¸Ş½ÃÁö¸¦ ¼ö½ÅÇÑ´Ù.
+//        if (strLen == -1) return -1;
+//        msg[strLen] = '\0';//¹®ÀÚ¿­ÀÇ ³¡À» ¾Ë¸®±â À§ÇØ ¼³Á¤
+//        if (!strcmp(msg, "q")) {
+//            printf("left\n");
+//            closesocket(sock);
+//            exit(0);
+//        }
+//        else {
+//            printf("Result : %s\n", msg);
+//        }
+//        strcpy(msg, "");
+//    }
+//    return 0;
+//}
+//
