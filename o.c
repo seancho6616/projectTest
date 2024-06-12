@@ -21,35 +21,38 @@ void main() {
 	strcpy(serverIp, "10.20.12.4");	// 임의로 설정
 	portNum = 55555;		// 임의로 설정 " 55555 "
 
-	WSAStartup(MAKEWORD(2, 2), &wsaData);
-	sock = socket(PF_INET, SOCK_STREAM, 0);//소켓을 하나 생성한다.
+	//WSAStartup(MAKEWORD(2, 2), &wsaData);
+	//sock = socket(PF_INET, SOCK_STREAM, 0);//소켓을 하나 생성한다.
 
-	memset(&serverAddr, 0, sizeof(serverAddr));
-	serverAddr.sin_family = AF_INET;
-	serverAddr.sin_addr.s_addr = inet_addr(serverIp);
-	serverAddr.sin_port = htons(portNum);
+	//memset(&serverAddr, 0, sizeof(serverAddr));
+	//serverAddr.sin_family = AF_INET;
+	//serverAddr.sin_addr.s_addr = inet_addr(serverIp);
+	//serverAddr.sin_port = htons(portNum);
 
-	connect(sock, (SOCKADDR*)&serverAddr, sizeof(serverAddr));
+	//connect(sock, (SOCKADDR*)&serverAddr, sizeof(serverAddr));
 
 
-	sendThread = (HANDLE)_beginthreadex(NULL, 0, SendMsg, (void*)&sock, 0, NULL);		//메시지 전송용 쓰레드가 실행된다.
-	recvThread = (HANDLE)_beginthreadex(NULL, 0, RecMsg, (void*)&sock, 0, NULL);		//메시지 수신용 쓰레드가 실행된다.
+	//sendThread = (HANDLE)_beginthreadex(NULL, 0, SendMsg, (void*)&sock, 0, NULL);		//메시지 전송용 쓰레드가 실행된다.
+	//recvThread = (HANDLE)_beginthreadex(NULL, 0, RecMsg, (void*)&sock, 0, NULL);		//메시지 수신용 쓰레드가 실행된다.
 
 	while (1) {
 		switch (c) {
 			//로그인 or 회원가입
-			case 'a':
+			case 'A':
 				system("cls");
 				gotoxy(3, 1);	printf("1. 로그인");
 				gotoxy(3, 3);	printf("2. 회원가입");
-				gotoxy(3, 5);	printf(">");	scanf("%d", &n);
+				gotoxy(3, 5);	printf(">  ");	scanf("%d", &n);
+				getchar();
 				switch (n) {
 					case 1:			// 로그인
 						system("cls");
 						gotoxy(3, 1);	printf("[로그인]");
 						gotoxy(3, 3);	printf("ID :");
 						gotoxy(3, 5);	printf("P.W :\n");
-						system("pause");
+						gotoxy(10, 3);   gets(id);         // ID 입력
+						gotoxy(10, 5);   gets(pw);         // PW 입력
+						//system("pause");
 						c = 'c';
 						break;
 					case 2:			//회원가입
@@ -57,26 +60,31 @@ void main() {
 						gotoxy(3, 1);	printf("[회원가입]");
 						gotoxy(3, 3);	printf("1. 고객");
 						gotoxy(3, 5);	printf("2. 병원");
-						gotoxy(3, 7);	printf(">");	scanf("%d", &n);
+						gotoxy(3, 7);	printf(">  ");	scanf("%d", &n);
+						getchar();
 						if (n == 1) {
-							c = 'j';
-							break;
+							c = 'J';
 						}
 						else if (n == 2) {
-							c = 'o';
+							c = 'O';
 						}
 						break;
 				}
 				break;
-			case 'j':			//고객 회원가입
+			case 'J':			//고객 회원가입
 				system("cls");
 				gotoxy(3, 1);		printf("[고객] 회원가입");
 				gotoxy(3, 3);		printf("ID :");
 				gotoxy(3, 5);		printf("P.W :");
 				gotoxy(3, 7);		printf("이름 :");
 				gotoxy(3, 9);		printf("전화번호 :");
+				gotoxy(15, 3);	gets(client->id);
+				gotoxy(15, 5);	gets(client->pw);
+				gotoxy(15, 7);	gets(client->name);
+				gotoxy(15, 9);	gets(client->num);
+				c = 'a';
 				break;
-			case 'o':				//병원 가입
+			case 'O':				//병원 가입
 				system("cls");
 				gotoxy(3, 1);		printf("[병원] 회원가입");
 				gotoxy(3, 3);		printf("ID :");
@@ -84,6 +92,14 @@ void main() {
 				gotoxy(3, 7);		printf("병원명 :");
 				gotoxy(3, 9);		printf("지역 :");
 				gotoxy(3, 10);	printf("(시, 동)");
+				gotoxy(15, 3);  gets(manager->id);
+				getchar();
+				gotoxy(15, 5);  gets(manager->pw);
+				gotoxy(15, 7);  gets(manager->name);
+				gotoxy(15, 9);  gets(manager->lo.city); printf(" 시\t"); 
+				gets(manager->lo.dong); printf("동");
+				c = 'a';
+
 				break;
 			// 고객메인
 			case 'c':
@@ -92,6 +108,7 @@ void main() {
 				reservationBorder();	// 예약날짜 칸
 				reservationDate();		// 예약 날짜 확인 ( 다가오는 예약 날짜 )
 				gotoxy(3, 12);	printf(">");	scanf("%d", &num);
+				getchar();
 				switch (num) {
 					case 1:
 						c = 'f';				// 진료 기록 확인 창으로 이동
@@ -116,7 +133,7 @@ void main() {
 				medicalRecordCheck();		// 고객 진료 기록 확인 창
 				c = 'c';								// 메인으로 전환
 
-				system("pause");
+				//system("pause");
 				break;
 			case 'b':
 				system("cls");
@@ -129,7 +146,7 @@ void main() {
 				system("cls");
 				corrInformation();		// 고객 정보 수정 및 탈퇴 창
 				editInformation();		// 정보 수정 및 탈퇴 기능
-				system("pause");
+				//system("pause");
 				c = 'c';						// 메인으로 전환
 				break;
 			case 'm':		//병원메인
@@ -138,6 +155,7 @@ void main() {
 				reservationBorder();	// 예약날짜 칸
 				todayReservation();		// 오늘 예약자 확인
 				gotoxy(3, 16);	printf(">");	scanf("%d", &num);
+				getchar();
 				switch (num) {
 				case 1:							// 진료 기록 창으로 전환
 					c = 'R';
@@ -180,6 +198,7 @@ void main() {
 				reservOrInocul();		// 예약 및 접종 창
 				n = 0;
 				scanf("%d", &n);
+				getchar();
 				if (n == 1) 
 					c = 'E';					// n==1 이면 예약창으로
 				else if (n == 2) 
@@ -217,16 +236,17 @@ void main() {
 				printf("종료되었습니다");
 				break;
 			default:
-				printf("다시입력");
+				printf("다시입력\t");
+				scanf("%c", c);
 				break;
 		}
 	}
 
-	WaitForSingleObject(sendThread, INFINITE);//전송용 쓰레드가 중지될때까지 기다린다./
-	WaitForSingleObject(recvThread, INFINITE);//수신용 쓰레드가 중지될때까지 기다린다.
+	//WaitForSingleObject(sendThread, INFINITE);//전송용 쓰레드가 중지될때까지 기다린다./
+	//WaitForSingleObject(recvThread, INFINITE);//수신용 쓰레드가 중지될때까지 기다린다.
 
 
-	//클라이언트가 종료를 시도한다면 이줄 아래가 실행된다.
-	closesocket(sock);//소켓을 종료한다.
-	WSACleanup();//윈도우 소켓 사용중지를 운영체제에 알린다.
+	////클라이언트가 종료를 시도한다면 이줄 아래가 실행된다.
+	//closesocket(sock);//소켓을 종료한다.
+	//WSACleanup();//윈도우 소켓 사용중지를 운영체제에 알린다.
 }
