@@ -3,28 +3,40 @@
 #pragma comment(lib, "ws2_32")  //비주얼스튜디오 환경에서 개발시 소켓 라이브러리 지정용#pragma warning(disable:4996)
 #pragma warning(disable : 6031)
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <winsock2.h>
 #include <process.h>
 #include <Windows.h>
-#include <string.h>
 #include <time.h>
 #include "client.h"
 #include "0609.h"
 
+#define ID 20			// ID 배열크기
+#define PW 20			// PW 배열크기
+#define MAX 12			// 이름 배열크기
+#define NUM 16			// 번호(전화번호, 등록번호) 배열크기
+#define RECORD 500		// 진료 기록 배열크기
+#define LO 6			// 지역과 코드 배열크기
+#define BUF_SIZE 700
+
 
 TODAY today;
-CLIENT* client =NULL;
-MANAGER* manager = NULL;
+CLIENT client;
+MANAGER manager;
 ANIMAL* animal = NULL;
 MR* mr = NULL;
+MR mr1;
 RESER* reser = NULL;
+RESER reser1;
 
 char id[ID] ="", pw[PW]="";		// 로그인하려는 id, pw
 char join[BUF_SIZE]="";
 char animNum[NUM]="";
 
-char c = 'A';	// 목록 코드
+char c = 'a';	// 목록 코드
+char c1 = 'a';
+
 char rc = 0;	// 수신받은 목록 코드
 char resercheck;	// 예약 날짜 중복 여부
 
@@ -51,6 +63,7 @@ void todayDate() {     // 오늘의 날짜 함수
 
 // 요구사항 ID : P2
 void myRecode1() {  // 해당 고객 반려동물 목록 불러오는 함수
+    c = 'f';
     gotoxy(3, 1);                           // 위치이동
     printf("진료 기록 확인\n");         
     for (int i = 0; i < 50; i++) {
@@ -80,9 +93,12 @@ void reservationDate() {    // 예약 날짜 확인(다가오는 예약 날짜)
 
 // 요구사항 ID : P4
 void editInformation() {    // 정보수정 및 탈퇴
+    
     int inputnum;
-    switch (c) {        // 고객과 관리자(병원) 구분
-        case 'z':                   // 관리자(병원)
+    MANAGER manag;
+    CLIENT  clit;
+    switch (c1) {        // 고객과 관리자(병원) 구분
+        case 't':                   // 관리자(병원)
             gotoxy(8,20);      // 위치 이동
             printf("> ");            // 선택하고자 하는 것을 입력 위치 확인
             scanf("%d", &inputnum); // 입력( 선택하고자 하는 것을)
@@ -90,29 +106,33 @@ void editInformation() {    // 정보수정 및 탈퇴
             switch (inputnum) {
                 case 1: // 병원명 변경
                     // 위치 선정
+                    fflush(stdin); 
                     gotoxy(5, 4);
                     printf("> ");
-                    gets(manager->name); // 변경하고자 하는 병원명 입력
-                    c = 't';                        // 변경한 것을 서버로 전달하기 위하여
+                    gets(manager.name); // 변경하고자 하는 병원명 입력
+                    //strcpy(manager->name, manag.name);
                     gotoxy(10, 13);
+                    c = 't';                        // 변경한 것을 서버로 전달하기 위하여
                     break;
                 case 2: // 지역 변경
                     // 위치 선정
+                    fflush(stdin); 
                     gotoxy(5, 6);
                     printf("> ");
                     printf("시 : ");
-                    gets(manager->lo.city);  // 변경하고자 하는 시 입력
+                    gets(manager.lo.city);  // 변경하고자 하는 시 입력
                     gotoxy(15, 6);
-                    printf("동 : ");
-                    gets(manager->lo.dong);  // 변경하고자 하는 동 입력
+                    printf("\t동 : ");
+                    gets(manager.lo.dong);  // 변경하고자 하는 동 입력
                     c = 't';                        // 변경한 것을 서버로 전달하기 위하여
                     gotoxy(10, 13);
                     break;
                 case 3: // 비번변경
                     // 위치 선정
+                    fflush(stdin); 
                     gotoxy(5, 8);
                     printf("> ");
-                    gets(manager->pw);           // 변경하고자 하는 PW 입력
+                    gets(manager.pw);           // 변경하고자 하는 PW 입력
                     c = 't';                            // 변경한 것을 서버로 전달하기 위하여
                     gotoxy(10, 13);
                     break;
@@ -120,9 +140,8 @@ void editInformation() {    // 정보수정 및 탈퇴
                     c = 'y';
                     break;
             }
-            c = 'm';                    // 후 관리자(병원) 메인 화면으로 전환
             break;
-        case 'x':                       // 고객
+        case 'i':                       // 고객
             gotoxy(3, 20);         // 위치 이동
             printf("> ");                   // 선택하고자 하는 것을 입력 위치 확인
             scanf("%d", &inputnum); // 입력( 선택하고자 하는 것을 )
@@ -131,21 +150,21 @@ void editInformation() {    // 정보수정 및 탈퇴
                 case 1: // 고객명 변경
                     gotoxy(5, 4);
                     printf("> ");
-                    gets(client->name);              // 변경하고자 하는 이름 입력
+                    gets(client.name);              // 변경하고자 하는 이름 입력
                     gotoxy(10, 13);
                     c = 'i';
                     break;
                 case 2: // 전화번호 변경
                     gotoxy(5, 6);
                     printf("> ");
-                    gets(client->num);                   // 변경하고자 하는 번호 입력
+                    gets(client.num);                   // 변경하고자 하는 번호 입력
                     gotoxy(10, 13);
                     c = 'i';
                     break;
                 case 3: // 비번변경
                     gotoxy(5, 8);
                     printf("> ");
-                    gets(client->pw);                    // 변경하고자 하는 PW 입력
+                    gets(client.pw);                    // 변경하고자 하는 PW 입력
                     gotoxy(10, 13);
                     c = 'i';
                     break;
@@ -153,8 +172,7 @@ void editInformation() {    // 정보수정 및 탈퇴
                     c = 'v';
                     break;
             }
-            c = 'c';                                    // 후 고객 메인 화면으로 전환
-            break;
+           break;
     }
 }
 
@@ -166,70 +184,83 @@ void todayReservation() {   // 오늘 예약자 확인 ( 관리자 ( 병원 ) )
 
 // 요구사항 ID : M2
 void hosptalRecode() {     // 진료기록
-    mr->date.year = today.year;                     // 날짜는 자동 저장
-    mr->date.month = today.month;
-    mr->date.day = today.day;
-    mr->date.hour = today.hour;
-    strcpy(mr->mgName, manager->name);
-    gotoxy(10, 4);
-    printf("> ");
-    gets(mr->num);
+    mr1.date.year = today.year;                     // 날짜는 자동 저장
+    mr1.date.month = today.month;
+    mr1.date.day = today.day;
+    mr1.date.hour = today.hour;
+    strcpy(mr1.mgName, manager.name);
+    gotoxy(20, 4);
+    gets(mr1.num);
     gotoxy(4, 7);
     printf("> ");
-    gets(mr->record);
+    gets(mr1.record);
+    printf("\n\n");
     c = 'r';
 }
 
 // 요구사항 ID : M4
 void animalNum() {  // 반려동물 등록
-    gotoxy(10, 5);
-    gets(animal->num);
-    gotoxy(10, 7);
-    gets(animal->bd.year);
-    printf("-");
-    gets(animal->bd.month);
-    printf("-");
-    gets(animal->bd.day);
-    gotoxy(10, 9);
-    gets(animal->c_id);
+    ANIMAL anim;
+    gotoxy(15, 4);
+    gets(anim.num);
+    gotoxy(15, 6);
+    scanf("%d", &anim.bd.year);
+    gotoxy((int)sizeof(anim.bd.year) + 16, 6);
+    printf(" - ");
+    scanf("%d", &anim.bd.month);
+    gotoxy((int)sizeof(anim.bd.month)*3 + 16, 6);
+    printf(" - ");
+    scanf("%d", &anim.bd.day);
+    getchar();
+    gotoxy(15, 8);
+    gets(anim.c_id);
+    animal = &anim;
     c = 'n';
 }
 
 // 요구사항 ID : M3-1
 void reservationCheck() {   // 예약 날짜 중복 확인
-    gotoxy(10, 4);
-    gets(reser->date.year);
-    printf("-");
-    gets(reser->date.month);
-    printf("-");
-    gets(reser->date.day);
+    gotoxy(15, 4);
+    scanf("%d", &reser1.date.year);
+    gotoxy((int)sizeof(reser1.date.year) + 16, 4);
+    printf(" - ");
+    scanf("%d", &reser1.date.month);
+    gotoxy((int)sizeof(reser1.date.day) * 3 + 16, 4);
+    printf(" - ");
+    scanf("%d", &reser1.date.day);
+    gotoxy((int)sizeof(reser1.date.day) * 5 + 16, 4);
     printf(" ");
-    gets(reser->date.hour);
+    scanf("%d", &reser1.date.hour);
+    getchar();
     c = 'h';
 }
 
 // 요구사항 ID : M3
 void reservation() {    // 예약
-    gotoxy(15, 6);
-    gets(reser->c_id);
-    gotoxy(15, 8);
-    gets(reser->num);
-    strcpy(reser->mg_id, manager->id);
-    strcpy(reser->cord, "r");        // 예약이라는 것을 확인하기 위한 코드
+    fflush(stdin);
+    gotoxy(20, 6);
+    gets(reser1.c_id);
+    gotoxy(20, 8);
+    gets(reser1.num);
+    strcpy(reser1.mg_id, manager.id);
+    strcpy(reser1.cord, "r");        // 예약이라는 것을 확인하기 위한 코드
     c = 'e';
 }
 
 // 요구사항 ID : M4
 void inoculation() {    // 접종
-    gotoxy(15, 6);
-    gets(reser->c_id);
-    gotoxy(15, 8);
-    gets(reser->num);
-    strcpy(reser->mg_id, manager->id);
-    strcpy(reser->cord, "i");        // 접종이라는 것을 확인하기 위한 코드
-    reser->date.year = today.year + 1;
-    reser->date.month = today.month;
-    reser->date.day = today.day;
+    gotoxy(20, 4);
+    gets(reser1.c_id);
+    gotoxy(20, 8);
+    gets(reser1.num);
+    strcpy(reser1.mg_id, manager.id);
+    strcpy(reser1.cord, "i");        // 접종이라는 것을 확인하기 위한 코드
+    reser1.date.year = today.year + 1;
+    reser1.date.month = today.month;
+    reser1.date.day = today.day;
+    reser1.date.hour = 0;
+    gotoxy(20, 6);  printf("%d - %d - %d",
+        reser1.date.year-1, reser1.date.month, reser1.date.day);
     c = 'u';
 }
 

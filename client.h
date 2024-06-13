@@ -8,6 +8,7 @@
 #define BUF_SIZE 700
 
 char c;				// 목록 코드
+char c1;
 char rc;				// 수신받은 목록 코드
 char resercheck;	// 예약 날짜 중복 여부
 int loinNum;		// 로그인 확인 여부
@@ -66,11 +67,13 @@ typedef struct reser {	// 예약.접종 관리 구조체
 }RESER;
 
 TODAY today;
-CLIENT *client;
-MANAGER *manager;
+CLIENT client;
+MANAGER manager;
 ANIMAL *animal;
 MR *mr;
+MR mr1;
 RESER *reser;
+RESER reser1;
 
 WSADATA wsaData;
 SOCKET sock;
