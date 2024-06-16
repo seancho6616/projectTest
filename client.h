@@ -1,14 +1,14 @@
 #pragma once
-#define ID 20			// ID 배열크기
-#define PW 20			// PW 배열크기
-#define MAX 12			// 이름 배열크기
-#define NUM 16			// 번호(전화번호, 등록번호) 배열크기
+#define ID 20					// ID 배열크기
+#define PW 20				// PW 배열크기
+#define MAX 12				// 이름 배열크기
+#define NUM 16				// 번호(전화번호, 등록번호) 배열크기
 #define RECORD 500		// 진료 기록 배열크기
-#define LO 6			// 지역과 코드 배열크기
+#define LO 6					// 지역과 코드 배열크기
 #define BUF_SIZE 700
 
 char c;				// 목록 코드
-char c1;
+char c1;				// 클라이언트 창 이동하기 위한 코드
 char rc;				// 수신받은 목록 코드
 char resercheck;	// 예약 날짜 중복 여부
 int loinNum;		// 로그인 확인 여부
@@ -27,38 +27,38 @@ typedef struct local {	// 지역 구조체
 }LOCAL;
 
 typedef struct client {	// 고객 구조체
-	char name[MAX];		// 이름
+	char name[MAX];	// 이름
 	char num[NUM];		// 전화번호
-	char id[ID];		// 고객ID
-	char pw[PW];		// P.W
+	char id[ID];			// 고객ID
+	char pw[PW];			// P.W
 	struct client* next;// 다음 노드
 }CLIENT;
 
 typedef struct manager {// 관리자(병원) 구조체
 	char name[MAX];		// 병원명
-	LOCAL lo;			// 지역 구조체
-	char id[ID];		// 관리자ID
-	char pw[PW];		// P.W
+	LOCAL lo;					// 지역 구조체
+	char id[ID];				// 관리자ID
+	char pw[PW];				// P.W
 	struct manager* next;// 다음 노드
 }MANAGER;
 
 typedef struct animal {	// 반려동물 구조체
-	char num[NUM];		// 동물등록번호
-	TODAY bd;			// 생일 날짜 구조체
-	char c_id[ID];		// 고객ID
-	struct animal* next;// 다음 노드
+	char num[NUM];			// 동물등록번호
+	TODAY bd;					// 생일 날짜 구조체
+	char c_id[ID];				// 고객ID
+	struct animal* next;	// 다음 노드
 }ANIMAL;
 
-typedef struct mr {		// 진료 기록 구조체
-	char num[NUM];		// 동물등록번호
-	TODAY date;			// 진료 날짜
+typedef struct mr {			// 진료 기록 구조체
+	char num[NUM];			// 동물등록번호
+	TODAY date;				// 진료 날짜
 	char mgName[MAX];	// 병원명
 	char record[RECORD];// 기록
-	struct mr* next;	// 다음 노드
+	struct mr* next;			// 다음 노드
 }MR;
 
 typedef struct reser {	// 예약.접종 관리 구조체
-	char c_id[ID];		// 고객ID
+	char c_id[ID];			// 고객ID
 	char mg_id[ID];		// 관리자(병원)ID
 	char num[NUM];		// 동물등록번호
 	TODAY date;			// 예약.접종날짜
@@ -66,12 +66,12 @@ typedef struct reser {	// 예약.접종 관리 구조체
 	struct reser* next;	// 다음 노드
 }RESER;
 
-TODAY today;
+TODAY today;			
 CLIENT client;
 MANAGER manager;
 ANIMAL *animal;
-MR *mr;
-MR mr1;
+MR *mr;					// 서버에서 받은 값을 저장하기 위한 연결리스트
+MR mr1;					// 서버로 전달하기 위해 저장하기 위한 구조체
 RESER *reser;
 RESER reser1;
 
