@@ -19,21 +19,10 @@ void textcolor(int colorNum) {
 // 메인화면 예약창 네모박스 (고객, 병원)
 void reservationBorder() {
 	gotoxy(40, 3);	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
-	gotoxy(40, 4);	printf("┃                            ┃");
-	gotoxy(40, 5);	printf("┃                            ┃");
-	gotoxy(40, 6);	printf("┃                            ┃");
-	gotoxy(40, 7);	printf("┃                            ┃");
-	gotoxy(40, 8);	printf("┃                            ┃");
-	gotoxy(40, 9);	printf("┃                            ┃");
-	gotoxy(40, 10);	printf("┃                            ┃");
-	gotoxy(40, 11);	printf("┃                            ┃");
-	gotoxy(40, 12);	printf("┃                            ┃");
-	gotoxy(40, 13);	printf("┃                            ┃");
-	gotoxy(40, 14);	printf("┃                            ┃");
-	gotoxy(40, 15);	printf("┃                            ┃");
-	gotoxy(40, 16);	printf("┃                            ┃");
-	gotoxy(40, 17);	printf("┃                            ┃");
-	gotoxy(40, 18);	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
+	for (int i = 4; i <= 19; i++) {
+		gotoxy(40, i);	printf("┃                            ┃");
+	}
+	gotoxy(40, 20);	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
 	gotoxy(41, 4); printf("[예약]");
 }
 

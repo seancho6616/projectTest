@@ -267,93 +267,82 @@ unsigned WINAPI SendMsg(void* arg) {//전송용 쓰레드함수
     while (1) {
         switch (c) {
             case 'l':   //로그인
-                send(sock, &c, 1, 0);    // 목록코드 전달
-                sprintf(join, "%s@%s", id, pw); //ID와 PW를 join에 합치기
+                sprintf(join, "%c@%s@%s", id, pw); //ID와 PW를 join에 합치기
                 send(sock, join, strlen(join), 0);  // join 서버로 전달
                 strcpy(join, "");
                 break;
             case 'j':  //고객 회원가입
-                send(sock, &c, 1, 0);                            // 목록코드 전달
-                sprintf(join, "%s@%s@%s@%s",        // 화원가입에 입력받았던 것 join에 합치기
-                    client.name, client.num, client.id, client.pw);
+                sprintf(join, "%c@%s@%s@%s@%s",        // 화원가입에 입력받았던 것 join에 합치기
+                    c, client.name, client.num, client.id, client.pw);
                 send(sock, join, strlen(join), 0);          // join 서버로 전달
                 strcpy(join, "");
                 break;
             case 'o':  //병원 회원가입
-                send(sock, &c, 1, 0);                            // 목록코드 전달
-                sprintf(join, "%s@%s@%s@%s@%s",        // 화원가입에 입력받았던 것 join에 합치기
-                    manager.name, manager.lo.city, manager.lo.dong, manager.id, manager.pw);
+                sprintf(join, "%c@%s@%s@%s@%s@%s",        // 화원가입에 입력받았던 것 join에 합치기
+                    c, manager.name, manager.lo.city, manager.lo.dong, manager.id, manager.pw);
                 send(sock, join, strlen(join), 0);          // join 서버로 전달
                 strcpy(join, "");
                 break;
             case 'f':   // 진료기록 확인 1
-                send(sock, &c, 1, 0);                                // 목록코드 전달
-                send(sock, client.id, strlen(client.id), 0);    // 고객 ID 서버로 전달
+                sprintf(join, "%c@%s", c, client.id);
+                send(sock, join, strlen(join), 0);    // 고객 ID 서버로 전달
                 break;
             case 's': // 진료기록확인2
-                send(sock, &c, 1, 0);                                    // 목록코드 전달
-                send(sock, animNum, strlen(animNum), 0);// 반려동물 등록번호 서버로 전달
-                break;
+                sprintf(join, "%c@%s", c, animNum);
+                send(sock, join, strlen(join), 0);    // 고객 ID 서버로 전달break;
             case 'd':   // 예약날짜확인(고객)
             case 'w':   // 오늘 예약자 확인(병원)
             case 'b':   // 예약 내역확인(고객)
-                send(sock, &c, 1, 0);        // 각 목록코드 전달
-                sprintf(join, "%d@%d@%d@%d",        // date에 날짜 정보 합치기
-                    today.year, today.month, today.day, today.hour);
+                sprintf(join, "%c@%d@%d@%d@%d",        // date에 날짜 정보 합치기
+                    c, today.year, today.month, today.day, today.hour);
                 send(sock, join, strlen(join), 0);      // date 서버로 전달
                 strcpy(join, "");
                 break;
             case 'r':   // 진료기록
-                send(sock, &c, 1, 0);        // 목록코드 전달
-                sprintf(join, "%s@%d@%d@%d@%s@%s", 
-                    mr->num, mr->date.year, mr->date.month, mr->date.day, mr->mgName, mr->record);
+                sprintf(join, "%c@%s@%d@%d@%d@%s@%s", 
+                    c, mr->num, mr->date.year, mr->date.month, mr->date.day, mr->mgName, mr->record);
                 send(sock, join, strlen(join), 0);
                 strcpy(join, "");
                 break;
             case 'h':   // 예약 날짜 중복
-                send(sock, &c, 1, 0);
-                sprintf(join, "%d@%d@%d@%d",
-                    today.year, today.month, today.day, today.hour);
+                sprintf(join, "%c@%d@%d@%d@%d",
+                    c, today.year, today.month, today.day, today.hour);
                 send(sock, join, strlen(join), 0);
                 strcpy(join, "");
                 break;
             case 'e':   // 예약
             case 'u':   // 접종
-                send(sock, &c, 1, 0);
-                sprintf(join, "%s@%s@%s@%d@%d@%d@%d@%s",
-                    reser->c_id, reser->mg_id, reser->num, reser->date.year, reser->date.month, reser->date.day,
+                sprintf(join, "%c@%s@%s@%s@%d@%d@%d@%d@%s",
+                    c, reser->c_id, reser->mg_id, reser->num, reser->date.year, reser->date.month, reser->date.day,
                     reser->date.hour, reser->cord);
                 send(sock, join, strlen(join), 0);
                 strcpy(join, "");
                 break;
             case 'n':   // 동물정보 등록
-                send(sock, &c, 1, 0);
-                sprintf(join, "%s@%d@%d@%d@%s",
-                    animal->num, animal->bd.year, animal->bd.month, animal->bd.day, animal->c_id);
+                sprintf(join, "%c@%s@%d@%d@%d@%s",
+                    c, animal->num, animal->bd.year, animal->bd.month, animal->bd.day, animal->c_id);
                 send(sock, join, strlen(join), 0);
                 strcpy(join, "");
                 break;
             case 'i':       // 고객 정보 수정
-                send(sock, &c, 1, 0);
-                sprintf(join, "%s@%s@%s@%s",        // 고객 수정 정보에 입력받았던 것 join에 합치기
-                    client.name, client.num, client.id, client.pw);
+                sprintf(join, "%c@%s@%s@%s@%s",        // 고객 수정 정보에 입력받았던 것 join에 합치기
+                    c, client.name, client.num, client.id, client.pw);
                 send(sock, join, strlen(join), 0);          // join 서버로 전달
                 strcpy(join, "");
                 break;
             case 't':       // 관리자 정보 수정
-                send(sock, &c, 1, 0);
-                sprintf(join, "%s@%s@%s@%s@%s",        // 관리자 수정 정보에 입력받았던 것 join에 합치기
-                    manager.name, manager.lo.city, manager.lo.dong, manager.id, manager.pw);
+                sprintf(join, "%c@%s@%s@%s@%s@%s",        // 관리자 수정 정보에 입력받았던 것 join에 합치기
+                    c, manager.name, manager.lo.city, manager.lo.dong, manager.id, manager.pw);
                 send(sock, join, strlen(join), 0);          // join 서버로 전달
                 strcpy(join, "");
                 break;
             case 'y':       // 관리자 탈퇴
-                send(sock, &c, 1, 0);
-                send(sock, manager.id, strlen(manager.id), 0);    // 관리자 ID 서버로 전달
+                sprintf(join, "%c@%s", c, manager.id);
+                send(sock, join, strlen(join), 0);    // 관리자 ID 서버로 전달
                 break;
             case 'v':       // 고객 탈퇴
-                send(sock, &c, 1, 0);
-                send(sock, client.id, strlen(client.id), 0);    // 고객 ID 서버로 전달
+                sprintf(join, "%c@%s", c, client.id);
+                send(sock, join, strlen(join), 0);    // 고객 ID 서버로 전달
                 break;
             case 'q':
                 printf("종료합니다.\n");
@@ -367,6 +356,7 @@ unsigned WINAPI SendMsg(void* arg) {//전송용 쓰레드함수
 unsigned WINAPI RecMsg(void* arg) {// 소켓send함수
     SOCKET sock = *((SOCKET*)arg);
     int strLen;
+    char word;
 
     while (1) {//반복
         recv(sock, &rc, 1, 0);
