@@ -46,11 +46,15 @@ void corrInformation() {
 
 // 진료 기록 확인 (고객)
 void medicalRecordCheck() {
+	q = 5;
+	q2 = 1;
 	myRecode1();
 	gotoxy(20, 20);
 	printf("> ");
 	scanf("%s", &animNum);
 	getchar();
+	q = 5;
+	q2 = 1;
 	myRecode2();
 }
 

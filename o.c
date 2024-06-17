@@ -93,8 +93,6 @@ void main() {
 				gotoxy(15, 9);	gets(client.num);
 				gotoxy(3, 12);
 				system("pause");
-				c = 'j';
-				c1 = 'a';
 				break;
 			case 'o':				//병원 가입
 				system("cls");
@@ -123,6 +121,8 @@ void main() {
 				fflush(stdin);				// 전에 있던 버퍼 초기화
 				cuMainScreen();			// 고객 메인목록 창
 				reservationBorder();	// 예약날짜 칸
+				int q = 5;
+				int q2 = 1; 
 				reservationDate();		// 예약 날짜 확인 ( 다가오는 예약 날짜 )
 				gotoxy(3, 12);	printf(">  ");	scanf("%d", &num);
 				getchar();
@@ -154,13 +154,13 @@ void main() {
 				medicalRecordCheck();		// 고객 진료 기록 확인 창
 				gotoxy(3, 20);
 				system("pause");
-
 				c1 = 'c';								// 메인으로 전환
-
 				break;
 			case 'b':
 				system("cls");
 				fflush(stdin);
+				int q = 5;
+				int q2 = 1; 
 				findReservation();				// 예약 내역 확인 창
 				c = 'b';
 				gotoxy(3, 20);
@@ -180,6 +180,8 @@ void main() {
 				fflush(stdin);
 				mgMainScreen();		// 관리자( 병원 ) 메인목록 창
 				reservationBorder();	// 예약날짜 칸
+				int q = 5;
+				int q2 = 1;
 				todayReservation();		// 오늘 예약자 확인
 				gotoxy(3, 16);	printf(">  ");	scanf("%d", &num);
 				getchar();
@@ -280,6 +282,7 @@ void main() {
 				c1 = 'm';						// 병원 메인으로 전환
 				break;
 			case 'q':
+				c = 'q';
 				gotoxy(3, 20);
 				printf("종료되었습니다");
 				exit(0);

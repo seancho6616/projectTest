@@ -24,10 +24,8 @@
 TODAY today;
 CLIENT client;
 MANAGER manager;
-ANIMAL* animal = NULL;
-MR* mr = NULL;
+ANIMAL animal;
 MR mr1;
-RESER* reser = NULL;
 RESER reser1;
 
 char id[ID] ="", pw[PW]="";		// 로그인하려는 id, pw
@@ -39,6 +37,8 @@ char c1 = 'a'; // 클라이언트 목록 코드
 
 char rc = 0;	// 수신받은 목록 코드
 char resercheck;	// 예약 날짜 중복 여부
+int q = 5;
+int q2 = 1;
 
 int loinNum = 0; // 로그인 확인여부
 //int num = 0;
@@ -197,21 +197,19 @@ void hosptalRecode() {     // 진료기록
 
 // 요구사항 ID : M4
 void animalNum() {  // 반려동물 등록
-    ANIMAL anim;
     gotoxy(15, 4);
-    gets(anim.num);
+    gets(animal.num);
     gotoxy(15, 6);
-    scanf("%d", &anim.bd.year);
-    gotoxy(sizeof(anim.bd.year) + 16, 6);
+    scanf("%d", &animal.bd.year);
+    gotoxy(sizeof(animal.bd.year) + 16, 6);
     printf(" - ");
-    scanf("%d", &anim.bd.month);
-    gotoxy((int)sizeof(anim.bd.month)*3 + 16, 6);
+    scanf("%d", &animal.bd.month);
+    gotoxy((int)sizeof(animal.bd.month)*3 + 16, 6);
     printf(" - ");
-    scanf("%d", &anim.bd.day);
+    scanf("%d", &animal.bd.day);
     getchar();
     gotoxy(15, 8);
-    gets(anim.c_id);
-    animal = &anim;
+    gets(animal.c_id);
     c = 'n';
 }
 
@@ -300,7 +298,7 @@ unsigned WINAPI SendMsg(void* arg) {//전송용 쓰레드함수
                 break;
             case 'r':   // 진료기록
                 sprintf(join, "%c@%s@%d@%d@%d@%s@%s", 
-                    c, mr->num, mr->date.year, mr->date.month, mr->date.day, mr->mgName, mr->record);
+                    c, mr1.num, mr1.date.year, mr1.date.month, mr1.date.day, mr1.mgName, mr1.record);
                 send(sock, join, strlen(join), 0);
                 strcpy(join, "");
                 break;
@@ -313,14 +311,14 @@ unsigned WINAPI SendMsg(void* arg) {//전송용 쓰레드함수
             case 'e':   // 예약
             case 'u':   // 접종
                 sprintf(join, "%c@%s@%s@%s@%d@%d@%d@%d@%s",
-                    c, reser->c_id, reser->mg_id, reser->num, reser->date.year, reser->date.month, reser->date.day,
-                    reser->date.hour, reser->cord);
+                    c, reser1.c_id, reser1.mg_id, reser1.num, reser1.date.year, reser1.date.month, reser1.date.day,
+                    reser1.date.hour, reser1.cord);
                 send(sock, join, strlen(join), 0);
                 strcpy(join, "");
                 break;
             case 'n':   // 동물정보 등록
                 sprintf(join, "%c@%s@%d@%d@%d@%s",
-                    c, animal->num, animal->bd.year, animal->bd.month, animal->bd.day, animal->c_id);
+                    c, animal.num, animal.bd.year, animal.bd.month, animal.bd.day, animal.c_id);
                 send(sock, join, strlen(join), 0);
                 strcpy(join, "");
                 break;
@@ -349,299 +347,221 @@ unsigned WINAPI SendMsg(void* arg) {//전송용 쓰레드함수
                 closesocket(sock);
                 exit(0);
         }
+        c = '\0';
     }
     return 0;
 }
 
-unsigned WINAPI RecMsg(void* arg) {// 소켓send함수
+unsigned WINAPI RecMsg(void* arg) {
     SOCKET sock = *((SOCKET*)arg);
     int strLen;
-    char word;
-
-    while (1) {//반복
-        recv(sock, &rc, 1, 0);
-        if (rc == 0)
+    char* word = NULL;
+    int w;
+    ANIMAL* current;
+    while (1) {
+        strLen = recv(sock, join, BUF_SIZE - 1, 0);
+        if (strLen == -1)
             return -1;
-        if (rc == 'q') {
+        join[strLen] = '\0';
+        if (!strcmp(join, "q")) {
             printf("Client : Disconnection\n");
             closesocket(sock);
             exit(0);
         }
-        else{
+        else {
+            word = strtok(join, "@");
+            rc = word[0];
+            word = strtok(NULL, "@");
             switch (rc) {
-                case 'l':   // 로그인
-                    recv(sock, &loinNum, 1, 0);
-                    switch (loinNum) {
-                        case 0: // 해당 정보가 없을 경우
-                            gotoxy(3, 7);
-                            textcolor(RED);
-                            printf("아이디 또는 비밀번호를 잘못 입력했습니다.");
-                            textcolor(WHITE);
-                            system("pause");
-                            c = 'l';
-                            break;
-                        case 1: // 해당 정보가 고객일 경우
-                            strLen = recv(sock, join, BUF_SIZE - 1, 0);
-                            join[strLen] = '\0';
-                            strcpy(client.name, strtok(join, "@"));
-                            strcpy(client.num, strtok(NULL, "@"));
-                            strcpy(client.id, strtok(NULL, "@"));
-                            strcpy(client.pw, strtok(NULL, "@"));
-                            textcolor(GREEN);
-                            printf("로그인 되었습니다");
-                            textcolor(WHITE);
-                            c = 'c';
-                            break;
-                        case 2: // 해당 정보가 관리자 ( 병원 ) )일 경우
-                            strLen = recv(sock, join, BUF_SIZE - 1, 0);
-                            join[strLen] = '\0';
-                            strcpy(manager.name, strtok(join, "@"));
-                            strcpy(manager.lo.city, strtok(NULL, "@"));
-                            strcpy(manager.lo.dong, strtok(NULL, "@"));
-                            strcpy(manager.id, strtok(NULL, "@"));
-                            strcpy(manager.pw, strtok(NULL, "@"));
-                            textcolor(GREEN);
-                            printf("로그인 되었습니다");
-                            textcolor(WHITE);
-                            c = 'm';
-                            break;
-                    }
-                    strcpy(join, "");
+            case 'l':		// 로그인 
+                w = atoi(word);
+                word = strtok(NULL, "@");
+                switch (w) {
+                case 0:
+                    gotoxy(3, 7);
+                    textcolor(RED);
+                    printf("아이디 또는 비밀번호를 잘못 입력했습니다.");
+                    textcolor(WHITE);
+                    system("pause");
+                    c1 = 'a';
                     break;
-                case 'j':       // 고객 회원가입 리시브코드
-                    recv(sock, &loinNum, 1, 0);
-                    switch (loinNum) {
-                        case 0:
-                            textcolor(RED);
-                            printf("ID가 중복됩니다");
-                            textcolor(WHITE);
-                            c = 'j';
-                        case 1:
-                            system("cls");
-                            textcolor(GREEN);
-                            printf("가입되었습니다.\n");
-                            textcolor(WHITE);
-                            c = 'a';
-                            break;
-                    }
-                    break;
-                case 'o':       // 관리자 ( 병원 ) 회원가입 리시브코드
-                    recv(sock, &loinNum, 1, 0);
-                    switch (loinNum) {
-                        case 0:
-                            textcolor(RED);
-                            printf("ID가 중복됩니다");
-                            textcolor(WHITE);
-                            c = 'j';
-                        case 1:
-                            system("cls");
-                            textcolor(GREEN);
-                            printf("가입되었습니다.\n");
-                            textcolor(WHITE);
-                            c = 'a';
-                            break;
-                    }
-                    break;
-                case 'f':       // 진료 기록확인 1 리시브 코드
-                    while ((strLen = recv(sock, join, BUF_SIZE - 1, 0) != -1)) {
-                        join[strLen] = '\0';
-                        ANIMAL* seAnim = (ANIMAL*)malloc(sizeof(ANIMAL));
-                        strcpy(seAnim->num, strtok(join, "@"));
-                        strcpy(seAnim->bd.year, strtok(NULL, "@"));
-                        strcpy(seAnim->bd.month, strtok(NULL, "@"));
-                        strcpy(seAnim->bd.day, strtok(NULL, "@"));
-                        strcpy(seAnim->c_id, strtok(NULL, "@"));
-                        seAnim->next = animal;
-                        animal = seAnim;
-                    }
-                    int i = 1;
-                    int i2 = 5;
-                    ANIMAL* current = animal;
-                    while (current != NULL) {
-                        gotoxy(4, i2);
-                        printf("%d : %s\n\n", i, current->num);
-                        i++;
-                        i2 += 2;
-                        current = current->next;
-                    }
-                    free(current);
-                    strcpy(join, "");
-                    break;
-                case 's':   // 진료 기록확인 2 리시브 코드
-                    while ((strLen = recv(sock, join, BUF_SIZE - 1, 0) != -1)) {
-                        join[strLen] = '\0';
-                        MR *reMr = (MR*)malloc(sizeof(MR));
-                        strcpy(reMr->num, strtok(join, "@"));
-                        strcpy(reMr->date.year, strtok(NULL, "@"));
-                        strcpy(reMr->date.month, strtok(NULL, "@"));
-                        strcpy(reMr->date.day, strtok(NULL, "@"));
-                        strcpy(reMr->mgName, strtok(NULL, "@"));
-                        strcpy(reMr->record, strtok(NULL, "@"));
-                        reMr->next = mr;
-                        mr = reMr;
-                    }
-                    if (mr == NULL) {
-                        fprintf(stderr, "Memory allocation failed\n");
-                        break;
-                    }
-                    int j = 1;
-                    int j2 = 5;
-                    MR* current1 = mr;
-                    while (current1 != NULL) {
-                        gotoxy(3, j2);
-                        printf("%d : %d-%d-%d\n", j,  
-                            current1->date.year, current1->date.month, current1->date.day);
-                        printf("%s\n", current1->record);
-                        j++;
-                        j2 += 4;
-                        current1 = current1->next;
-                    }
-                    free(current1);
-                    strcpy(join, "");
-                    break;
-                case 'd':       // 예약날짜확인(고객)
-                    while ((strLen = recv(sock, join, BUF_SIZE - 1, 0) != -1)) {
-                        join[strLen] = '\0';
-                        RESER* reRe = (RESER*)malloc(sizeof(RESER));
-                        strcpy(reRe->c_id, strtok(join, "@"));
-                        strcpy(reRe->mg_id, strtok(NULL, "@"));
-                        strcpy(reRe->num, strtok(NULL, "@"));
-                        strcpy(reRe->date.year, strtok(NULL, "@"));
-                        strcpy(reRe->date.month, strtok(NULL, "@"));
-                        strcpy(reRe->date.day, strtok(NULL, "@"));
-                        strcpy(reRe->date.hour, strtok(NULL, "@"));
-                        strcpy(reRe->cord, strtok(NULL, "@"));
-                        reRe->next = reser;
-                        reser = reRe;
-                    }
-                    RESER* current2 = reser;
-                    int o = 5;
-                    while (current2 != NULL) {
-                        gotoxy(42, o);
-                        printf("%d-%d-%d-%d\n\n",
-                            current2->date.year, current2->date.month, current2->date.day, current2->date.hour);
-                        current2 = current2->next;
-                        o++;
-                    }
-                    free(current2);
-                    strcpy(join, "");
-                    break;
-                case 'w':       // ( 병원 ) 오늘 예약자 확인
-                    while ((strLen = recv(sock, join, BUF_SIZE - 1, 0) != -1)) {
-                        join[strLen] = '\0';
-                        RESER *reRe = (RESER*)malloc(sizeof(RESER));
-                        strcpy(reRe->c_id, strtok(join, "@"));
-                        strcpy(reRe->mg_id, strtok(NULL, "@"));
-                        strcpy(reRe->num, strtok(NULL, "@"));
-                        strcpy(reRe->date.year, strtok(NULL, "@"));
-                        strcpy(reRe->date.month, strtok(NULL, "@"));
-                        strcpy(reRe->date.day, strtok(NULL, "@"));
-                        strcpy(reRe->date.hour, strtok(NULL, "@"));
-                        strcpy(reRe->cord, strtok(NULL, "@"));
-                        reRe->next = reser;
-                        reser = reRe;
-                    }
-                    int k = 5;
-                    RESER* current3=reser;
-                    while (current3 != NULL) {
-                        gotoxy(42, k);
-                        printf("%s", current3->c_id);
-                        current3 = current3->next;
-                        k++;
-                    }
-                    free(current3);
-                    strcpy(join, "");
-                    break;
-                case 'b':       // 예약내역확인
-                    while ((strLen = recv(sock, join, BUF_SIZE - 1, 0) != -1)) {
-                        join[strLen] = '\0';
-                        RESER* reRe = (RESER*)malloc(sizeof(RESER));
-                        strcpy(reRe->c_id, strtok(join, "@"));
-                        strcpy(reRe->mg_id, strtok(NULL, "@"));
-                        strcpy(reRe->num, strtok(NULL, "@"));
-                        strcpy(reRe->date.year, strtok(NULL, "@"));
-                        strcpy(reRe->date.month, strtok(NULL, "@"));
-                        strcpy(reRe->date.day, strtok(NULL, "@"));
-                        strcpy(reRe->date.hour, strtok(NULL, "@"));
-                        strcpy(reRe->cord, strtok(NULL, "@"));
-                        reRe->next = reser;
-                        reser = reRe;
-                    }
-                    RESER* current4 = reser;
-                    int p = 6;
-                    while (current4 != NULL) {
-                        gotoxy(3, p);
-                        printf("%d-%d-%d-%d\t%s",
-                            current4->date.year, current4->date.month, current4->date.day, current4->date.hour,
-                            current4->num);
-                        p+=2;
-                        current4 = current4->next;
-                    }
-                    free(current4);
-                    strcpy(join, "");
-                    break;
-                case 'r':
+                case 1:
+                    strcpy(client.name, strtok(NULL, "@"));
+                    strcpy(client.num, strtok(NULL, "@"));
+                    strcpy(client.id, strtok(NULL, "@"));
+                    strcpy(client.pw, strtok(NULL, "@"));
                     textcolor(GREEN);
-                    printf("기록되었습니다.");
+                    printf("로그인 되었습니다");
+                    textcolor(WHITE);
+                    c1 = 'c';
+                    break;
+                case 2:
+                    strcpy(manager.name, strtok(NULL, "@"));
+                    strcpy(manager.lo.city, strtok(NULL, "@"));
+                    strcpy(manager.lo.dong, strtok(NULL, "@"));
+                    strcpy(manager.id, strtok(NULL, "@"));
+                    strcpy(manager.pw, strtok(NULL, "@"));
+                    textcolor(GREEN);
+                    printf("로그인 되었습니다");
+                    textcolor(WHITE);
+                    c1 = 'm';
+                    break;
+                }
+                strcpy(join, "");
+                break;
+            case 'j':		// 고객 회원가입
+                w = atoi(word);
+                word = strtok(NULL, "@");
+                switch (w) {
+                case 0:
+                    textcolor(RED);
+                    printf("ID가 중복됩니다");
+                    textcolor(WHITE);
+                    c1 = 'j';
+                    break;
+                case 1:
+                    system("cls");
+                    textcolor(GREEN);
+                    printf("가입되었습니다.\n");
+                    textcolor(WHITE);
+                    c1 = 'a';
+                    break;
+                }
+                strcpy(join, "");
+                break;
+            case 'o':		// 관리자 ( 병원 ) 회원가입
+                w = atoi(word);
+                word = strtok(NULL, "@");
+                switch (w) {
+                case 0:
+                    textcolor(RED);
+                    printf("ID가 중복됩니다");
+                    textcolor(WHITE);
+                    c1 = 'j';
+                    break;
+                case 1:
+                    system("cls");
+                    textcolor(GREEN);
+                    printf("가입되었습니다.\n");
+                    textcolor(WHITE);
+                    c1 = 'a';
+                    break;
+                }
+                strcpy(join, "");
+                break;
+            case 'f':		// 진료 기록 확인 1 ( 동물등록번호 출력 )
+                strcpy(animal.num, strtok(NULL, "@"));
+                animal.bd.year = atoi(strtok(NULL, "@"));
+                animal.bd.month = atoi(strtok(NULL, "@"));
+                animal.bd.day = atoi(strtok(NULL, "@"));
+                strcpy(animal.c_id, strtok(NULL, "@"));
+                gotoxy(3, q);	printf("%d : %s\n", q2, animal.num);
+                q2++;	q += 2;
+                strcpy(join, "");
+                break;
+            case 's':		// 진료 기록 확인 2 ( 진료 기록 출력 )
+                strcpy(mr1.num, strtok(NULL, "@"));
+                mr1.date.year = atoi(strtok(NULL, "@"));
+                mr1.date.month = atoi(strtok(NULL, "@"));
+                mr1.date.day = atoi(strtok(NULL, "@"));
+                strcpy(mr1.mgName, strtok(NULL, "@"));
+                strcpy(mr1.record, strtok(NULL, "@"));
+                gotoxy(3, q);	printf("%d : %d-%d-%d\n", q2,
+                    mr1.date.year, mr1.date.month, mr1.date.day);
+                printf("%s\n", mr1.record);
+                q2++;
+                q += 4;
+                strcpy(join, "");
+                break;
+            case 'd':		// 예약날짜 확인 ( 고객 )
+            case 'w':		// ( 병원 ) 오늘 예약자 확인
+                strcpy(reser1.c_id, strtok(NULL, "@"));
+                strcpy(reser1.mg_id, strtok(NULL, "@"));
+                strcpy(reser1.num, strtok(NULL, "@"));
+                reser1.date.year = atoi(strtok(NULL, "@"));
+                reser1.date.month = atoi(strtok(NULL, "@"));
+                reser1.date.day = atoi(strtok(NULL, "@"));
+                reser1.date.hour = atoi(strtok(NULL, "@"));
+                strcpy(reser1.cord, strtok(NULL, "@"));
+                gotoxy(42, q);	printf("%d-%d-%d-%d\n",
+                    reser1.date.year, reser1.date.month, reser1.date.day, reser1.date.hour);
+                q += 2;
+                strcpy(join, "");
+                break;
+            case 'b':		// 예약 내역 확인
+                strcpy(reser1.c_id, strtok(NULL, "@"));
+                strcpy(reser1.mg_id, strtok(NULL, "@"));
+                strcpy(reser1.num, strtok(NULL, "@"));
+                reser1.date.year = atoi(strtok(NULL, "@"));
+                reser1.date.month = atoi(strtok(NULL, "@"));
+                reser1.date.day = atoi(strtok(NULL, "@"));
+                reser1.date.hour = atoi(strtok(NULL, "@"));
+                strcpy(reser1.cord, strtok(NULL, "@"));
+                gotoxy(3, q);	printf("%d-%d-%d-%d\t%s\n",
+                    reser1.date.year, reser1.date.month, reser1.date.day, reser1.date.hour, reser1.num);
+                q += 2;
+                strcpy(join, "");
+                break;
+            case 'r':		// 진료 기록
+                textcolor(GREEN);
+                printf("기록되었습니다.");
+                textcolor(WHITE);
+                break;
+            case 'h':		// 예약 날짜 중복
+                w = atoi(word);
+                switch (w) {
+                case 0:
+                    gotoxy(20, 4);
+                    textcolor(RED);
+                    printf("예약날짜가 중복됩니다.");
+                    textcolor(WHITE);
+                    system("pause");
+                    c1 = 'e';
+                    c = '\0';
+                    break;
+                case 1:
+                    gotoxy(20, 4);
+                    textcolor(GREEN);
+                    printf("예약 가능합니다");
                     textcolor(WHITE);
                     break;
-                case 'h':
-                    recv(sock, &loinNum, 1, 0);
-                    switch (loinNum) {
-                        case 0:
-                            gotoxy(20, 4);
-                            textcolor(RED);
-                            printf("예약날짜가 중복됩니다.");
-                            textcolor(WHITE);
-                            system("pause");
-                            c = 'E';
-                            break;
-                        case 1:
-                            gotoxy(20, 4);
-                            textcolor(GREEN);
-                            printf("예약 가능합니다");
-                            textcolor(WHITE);
-                            break;
-                    }
-                    break;
-                case 'e':
-                    textcolor(GREEN);
-                    printf("예약되었습니다.");
-                    textcolor(WHITE);
-                    break;
-                case 'u':
-                    textcolor(GREEN);
-                    printf("접종 예약되었습니다");
-                    textcolor(WHITE);
-                    break;
-                case 'n':
-                    textcolor(GREEN);
-                    printf("등록되었습니다");
-                    textcolor(WHITE);
-                    break;
-                case 'i':
-                case 't':
-                    gotoxy(10, 20);
-                    textcolor(YELLOW);
-                    printf("변경되었습니다");
-                    break;
-                case 'y':
-                case 'v':
-                    gotoxy(10, 20);
-                    textcolor(YELLOW);
-                    printf("탈퇴되었습니다");
-                    c = 'q';
-                    break;
-                case 'q':
-                    gotoxy(10, 20);
-                    printf("종료되었습니다");
-                    closesocket(sock);
-                    exit(0);
-                    break;
-
+                }
+                break;
+            case 'e':		// 예약
+                textcolor(GREEN);
+                printf("예약되었습니다.");
+                textcolor(WHITE);
+                break;
+            case 'u':		// 접종
+                textcolor(GREEN);
+                printf("접종 예약되었습니다");
+                textcolor(WHITE);
+                break;
+            case 'n':		// 동물정보 등록
+                textcolor(GREEN);
+                printf("등록되었습니다");
+                textcolor(WHITE);
+                break;
+            case 'i':	// 고객 정보 수정
+            case 't':	// 관리자 정보 수정
+                gotoxy(10, 20);
+                textcolor(YELLOW);
+                printf("변경되었습니다");
+                break;
+            case 'y':		// 관리자 탈퇴
+            case 'v':		// 고객 탈퇴
+                gotoxy(10, 20);
+                textcolor(YELLOW);
+                printf("탈퇴되었습니다");
+                c1 = 'q';
+                break;
+            case 'q':		// 종료
+                gotoxy(10, 20);
+                printf("종료되었습니다");
+                closesocket(sock);
+                exit(0);
+                break;
             }
         }
     }
-    return 0;
 }
-

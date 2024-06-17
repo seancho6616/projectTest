@@ -69,10 +69,8 @@ typedef struct reser {	// 예약.접종 관리 구조체
 TODAY today;			
 CLIENT client;
 MANAGER manager;
-ANIMAL *animal;
-MR *mr;					// 서버에서 받은 값을 저장하기 위한 연결리스트
+ANIMAL animal;
 MR mr1;					// 서버로 전달하기 위해 저장하기 위한 구조체
-RESER *reser;
 RESER reser1;
 
 WSADATA wsaData;
@@ -80,7 +78,9 @@ SOCKET sock;
 SOCKADDR_IN serverAddr;
 HANDLE sendThread, recvThread;
 
-			
+int q;
+int q2;
+
 char id[ID], pw[PW];		// 로그인하려는 id, pw
 char join[BUF_SIZE];		// 문자 합친것을 저장하기 위한 변수
 char animNum[NUM];		// 입력 받은 동물등록번호 
