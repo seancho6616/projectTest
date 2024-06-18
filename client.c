@@ -302,12 +302,6 @@ unsigned WINAPI SendMsg(void* arg) {//전송용 쓰레드함수
                 send(sock, join, strlen(join), 0);
                 strcpy(join, "");
                 break;
-            case 'h':   // 예약 날짜 중복
-                sprintf(join, "%c@%d@%d@%d@%d",
-                    c, today.year, today.month, today.day, today.hour);
-                send(sock, join, strlen(join), 0);
-                strcpy(join, "");
-                break;
             case 'e':   // 예약
             case 'u':   // 접종
                 sprintf(join, "%c@%s@%s@%s@%d@%d@%d@%d@%s",
@@ -507,27 +501,12 @@ unsigned WINAPI RecMsg(void* arg) {
                 printf("기록되었습니다.");
                 textcolor(WHITE);
                 break;
-            case 'h':		// 예약 날짜 중복
-                w = atoi(word);
-                switch (w) {
-                case 0:
-                    gotoxy(20, 4);
-                    textcolor(RED);
-                    printf("예약날짜가 중복됩니다.");
-                    textcolor(WHITE);
-                    system("pause");
-                    c1 = 'e';
-                    c = '\0';
-                    break;
-                case 1:
-                    gotoxy(20, 4);
-                    textcolor(GREEN);
-                    printf("예약 가능합니다");
-                    textcolor(WHITE);
-                    break;
-                }
-                break;
             case 'e':		// 예약
+                w = atoi(word);
+                if (w == 0) {
+                    printf("예약이 중복됩니다.\n");
+                    c1 = 'e';
+                }
                 textcolor(GREEN);
                 printf("예약되었습니다.");
                 textcolor(WHITE);
