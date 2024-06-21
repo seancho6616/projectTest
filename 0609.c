@@ -9,12 +9,65 @@
 #include "client.h"
 #include "0609.h"
 
+int n = 0;
+
 
 void textcolor(int colorNum) {
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), colorNum);
 }
 
 //enum ColorType { RED = 12, BLUE = 9, GREEN = 10, YELLOW = 14, WHITE = 15 }COLOR;
+
+void startInterface() {
+	gotoxy(3, 1);	printf("1. 로그인");
+	gotoxy(3, 3);	printf("2. 회원가입");
+	gotoxy(3, 5);	printf(">  ");	scanf("%d", &n);
+	getchar();
+}
+
+void joinInterface() {
+	gotoxy(3, 1);	printf("[회원가입]");
+	gotoxy(3, 3);	printf("1. 고객");
+	gotoxy(3, 5);	printf("2. 병원");
+	gotoxy(3, 7);	printf(">  ");	scanf("%d", &n);
+	getchar();
+}
+
+void joinClientInterface() {
+	gotoxy(3, 1);		printf("[고객] 회원가입");
+	gotoxy(3, 3);		printf("ID :");
+	gotoxy(3, 5);		printf("P.W :");
+	gotoxy(3, 7);		printf("이름 :");
+	gotoxy(3, 9);		printf("전화번호 :");
+	gotoxy(15, 3);	gets(client.id);
+	gotoxy(15, 5);	gets(client.pw);
+	gotoxy(15, 7);	gets(client.name);
+	gotoxy(15, 9);	gets(client.num);
+}
+
+void joinManagerInterface() {
+	gotoxy(3, 1);		printf("[병원] 회원가입");
+	gotoxy(3, 3);		printf("ID :");
+	gotoxy(3, 5);		printf("P.W :");
+	gotoxy(3, 7);		printf("병원명 :");
+	gotoxy(3, 9);		printf("지역 :");
+	gotoxy(3, 10);	printf("(시, 동)");
+	gotoxy(15, 3);  gets(manager.id);
+	gotoxy(15, 5);  gets(manager.pw);
+	gotoxy(15, 7);  gets(manager.name);
+	gotoxy(15, 9);  gets(manager.lo.city);
+	gotoxy(25, 9);	 printf(" 시\t");
+	gets(manager.lo.dong); gotoxy((int)strlen(manager.lo.dong) * 2 + 25, 9); 
+	printf("동\n");
+}
+
+void loginInterface() {
+	gotoxy(3, 1);	printf("[로그인]");
+	gotoxy(3, 3);	printf("ID :");
+	gotoxy(3, 5);	printf("P.W :\n");
+	gotoxy(10, 3);   gets(id);         // ID 입력
+	gotoxy(10, 5);   gets(pw);         // PW 입력
+}
 
 // 메인화면 예약창 네모박스 (고객, 병원)
 void reservationBorder() {
@@ -55,6 +108,7 @@ void medicalRecordCheck() {
 	getchar();
 	q = 5;
 	q2 = 1;
+	system("cls");
 	myRecode2();
 }
 
@@ -68,14 +122,10 @@ void cuMainScreen() {
 	for (int i = 0; i < 50; i++) {
 		printf("-");
 	}
-	gotoxy(3, 4);
-	printf("1. 진료 기록 확인");
-	gotoxy(3, 6);
-	printf("2. 예약 내역 확인");
-	gotoxy(3, 8);
-	printf("3. 회원 정보 수정 및 탈퇴");
-	gotoxy(3, 10);
-	printf("4. 종료");
+	gotoxy(3, 4);	printf("1. 진료 기록 확인");
+	gotoxy(3, 6);	printf("2. 예약 내역 확인");
+	gotoxy(3, 8);	printf("3. 회원 정보 수정 및 탈퇴");
+	gotoxy(3, 10);	printf("4. 종료");
 }
 
 // 병원 메인화면 (병원)

@@ -82,7 +82,7 @@ int q;
 int q2;
 
 char id[ID], pw[PW];		// 로그인하려는 id, pw
-char join[BUF_SIZE];		// 문자 합친것을 저장하기 위한 변수
+
 char animNum[NUM];		// 입력 받은 동물등록번호 
 
 void gotoxy(int x, int y);		// 위치 이동함수
@@ -103,13 +103,8 @@ void hosptalRecode();			// 진료 기록
 
 void animalNum();				// 반려동물 등록
 
-void reservationCheck();		// 예약 날짜 중복 확인
-
 void reservation();				// 예약
 
 void inoculation();				// 접종
 
-unsigned WINAPI SendMsg(void* arg);		// 서버 전달 함수
-
-unsigned WINAPI RecMsg(void* arg);		// 서버 수신 함수
 
