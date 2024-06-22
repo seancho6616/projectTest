@@ -41,6 +41,8 @@ int q = 5;      //  반복 출력 시 사용할 Y값
 int q2 = 1;     // 출력 정보 카운트
 
 int loinNum=0; // 로그인 확인여부
+int joinNum = 0;
+int ee;
 
 // 위치 이동 함수
 void gotoxy(int x, int y) {
@@ -267,7 +269,6 @@ void beforInterface() {
 				loginInterface();
 				gotoxy(3, 10);
 				c = 'l';
-				system("puase");
 				if (loinNum == 0) {
 					textcolor(RED);
 					gotoxy(3, 7);	 printf("아이디 또는 비밀번호를 잘못 입력했습니다.");
@@ -306,6 +307,12 @@ void beforInterface() {
 			fflush(stdin);
 			joinClientInterface();
 			gotoxy(3, 12);
+			if (joinNum == 0) {
+				textcolor(RED);
+				printf("ID가 중복됩니다.\n");
+				textcolor(WHITE);
+			}
+			else
 			c = 'j';
 			c1 = 'a';
 			break;
@@ -349,8 +356,7 @@ void clientInterface() {
 			c = 'b';
 			gotoxy(3, 20);
 			system("pause");
-			c1 = 'c';
-			c1 = 'b';				// 예약 내역 확인 창으로 이동
+			// c1 = 'b';				// 예약 내역 확인 창으로 이동
 			break;
 		case 3:
 			system("cls");
@@ -358,11 +364,10 @@ void clientInterface() {
 			corrInformation();		// 고객 정보 수정 및 탈퇴 창
 			editInformation();		// 정보 수정 및 탈퇴 기능
 			system("pause");
-			c1 = 'i';				// 정보 수정 및 탈퇴 창으로 이동
+			//c1 = 'i';				// 정보 수정 및 탈퇴 창으로 이동
 			break;
 		case 4:
 			c = 'q';				// 종료
-			c1 = 'q';
 			break;
 		default:					// 해당 없는 값을 입력 받았을때
 			printf("\n\t다시입력\n");
@@ -415,6 +420,14 @@ void managerInterface() {
 				reserv();					// 예약 창
 				reservation();				// 예약 정보 입력
 				gotoxy(3, 20);
+				if (ee == 0) {
+					printf("예약이 중복됩니다.\n");
+				}
+				else {
+					textcolor(GREEN);
+					printf("예약되었습니다.");
+					textcolor(WHITE);
+				}
 				system("pause");
 			}
 			else if (n == 2) {
@@ -445,7 +458,6 @@ void managerInterface() {
 			break;
 		case 6:									// 종료
 			c = 'q';
-			c1 = 'q';
 			break;
 		default:
 			printf("\n\t다시입력\n");		// 해당 없는 값을 입력 받았을때

@@ -304,7 +304,7 @@ unsigned WINAPI SendMsg(void* arg) {//전송용 쓰레드함수
                 sprintf(msg, "%c@%s@%s", c, id, pw); //ID와 PW를 msg에 합치기
                 send(sock, msg, strlen(msg), 0);  // msg 서버로 전달
                 printf("\n\ngood\n");
-                strcpy(msg, "");
+                printf("%s", msg);
                 c = '\0';
                 break;
             case 'j':  //고객 회원가입
@@ -312,15 +312,12 @@ unsigned WINAPI SendMsg(void* arg) {//전송용 쓰레드함수
                     c, client.name, client.num, client.id, client.pw);
                 send(sock, msg, strlen(msg), 0);          // msg 서버로 전달
                 printf("%s", msg);
-                strcpy(msg, "");
-                c = '\0';
                 break;
             case 'o':  //병원 회원가입
                 sprintf(msg, "%c@%s@%s@%s@%s@%s",        // 화원가입에 입력받았던 것 msg에 합치기
                     c, manager.name, manager.lo.city, manager.lo.dong, manager.id, manager.pw);
                 send(sock, msg, strlen(msg), 0);          // msg 서버로 전달
                 printf("%s", msg);
-                strcpy(msg, "");
                 break;
             case 'f':   // 진료기록 확인 1
                 sprintf(msg, "%c@%s", c, client.id);
@@ -337,13 +334,11 @@ unsigned WINAPI SendMsg(void* arg) {//전송용 쓰레드함수
                 sprintf(msg, "%c@%d@%d@%d@%d",        // date에 날짜 정보 합치기
                     c, today.year, today.month, today.day, today.hour);
                 send(sock, msg, strlen(msg), 0);      // date 서버로 전달
-                strcpy(msg, "");
                 break;
             case 'r':   // 진료기록
                 sprintf(msg, "%c@%s@%d@%d@%d@%s@%s",
                     c, mr1.num, mr1.date.year, mr1.date.month, mr1.date.day, mr1.mgName, mr1.record);
                 send(sock, msg, strlen(msg), 0);
-                strcpy(msg, "");
                 break;
             case 'e':   // 예약
             case 'u':   // 접종
@@ -351,25 +346,21 @@ unsigned WINAPI SendMsg(void* arg) {//전송용 쓰레드함수
                     c, reser1.c_id, reser1.mg_id, reser1.num, reser1.date.year, reser1.date.month, reser1.date.day,
                     reser1.date.hour, reser1.cord);
                 send(sock, msg, strlen(msg), 0);
-                strcpy(msg, "");
                 break;
             case 'n':   // 동물정보 등록
                 sprintf(msg, "%c@%s@%d@%d@%d@%s",
                     c, animal.num, animal.bd.year, animal.bd.month, animal.bd.day, animal.c_id);
                 send(sock, msg, strlen(msg), 0);
-                strcpy(msg, "");
                 break;
             case 'i':       // 고객 정보 수정
                 sprintf(msg, "%c@%s@%s@%s@%s",        // 고객 수정 정보에 입력받았던 것 msg에 합치기
                     c, client.name, client.num, client.id, client.pw);
                 send(sock, msg, strlen(msg), 0);          // msg 서버로 전달
-                strcpy(msg, "");
                 break;
             case 't':       // 관리자 정보 수정
                 sprintf(msg, "%c@%s@%s@%s@%s@%s",        // 관리자 수정 정보에 입력받았던 것 msg에 합치기
                     c, manager.name, manager.lo.city, manager.lo.dong, manager.id, manager.pw);
                 send(sock, msg, strlen(msg), 0);          // msg 서버로 전달
-                strcpy(msg, "");
                 break;
             case 'y':       // 관리자 탈퇴
                 sprintf(msg, "%c@%s", c, manager.id);
@@ -386,7 +377,7 @@ unsigned WINAPI SendMsg(void* arg) {//전송용 쓰레드함수
                 exit(0);
                 break;
         }
-        //c = '\0';
+        c = '\0';
         strcpy(msg, "");
     }
     return 0;
@@ -461,42 +452,42 @@ unsigned WINAPI RecMsg(void* arg) {
                 //}
                 break;
             case 'j':		// 고객 회원가입
-                w = atoi(strtok(NULL, "@"));
-                switch (w) {
-                case 0:     // ID가 중복 될 시
-                    textcolor(RED);
-                    printf("ID가 중복됩니다");
-                    textcolor(WHITE);
-                    c1 = 'j';       // 다시 회원가입 화면으로 전환
-                    break;
-                case 1:     // 정상 회원가입
-                    system("cls");
-                    textcolor(GREEN);
-                    printf("가입되었습니다.\n");
-                    textcolor(WHITE);
-                    c1 = 'a';   // 시작 화면으로 전환
-                    break;
-                }
+                joinNum = atoi(strtok(NULL, "@"));
+                //switch (w) {
+                //case 0:     // ID가 중복 될 시
+                //    textcolor(RED);
+                //    printf("ID가 중복됩니다");
+                //    textcolor(WHITE);
+                //    c1 = 'j';       // 다시 회원가입 화면으로 전환
+                //    break;
+                //case 1:     // 정상 회원가입
+                //    system("cls");
+                //    textcolor(GREEN);
+                //    printf("가입되었습니다.\n");
+                //    textcolor(WHITE);
+                //    c1 = 'a';   // 시작 화면으로 전환
+                //    break;
+                //}
                 rc = '\0';
                 strcpy(result, ""); 
                 break;
             case 'o':		// 관리자 ( 병원 ) 회원가입
-                w = atoi(strtok(NULL, "@"));
-                switch (w) {
-                case 0:     // ID가 중복 될 시
-                    textcolor(RED);
-                    printf("ID가 중복됩니다");
-                    textcolor(WHITE);
-                    c1 = 'o';   // 다시 회원가입 화면으로 전환
-                    break;
-                case 1:
-                    system("cls");
-                    textcolor(GREEN);
-                    printf("가입되었습니다.\n");
-                    textcolor(WHITE);
-                    c1 = 'a';   // 시작 화면으로 전환
-                    break;
-                }
+                joinNum = atoi(strtok(NULL, "@"));
+                //switch (w) {
+                //case 0:     // ID가 중복 될 시
+                //    textcolor(RED);
+                //    printf("ID가 중복됩니다");
+                //    textcolor(WHITE);
+                //    c1 = 'o';   // 다시 회원가입 화면으로 전환
+                //    break;
+                //case 1:
+                //    system("cls");
+                //    textcolor(GREEN);
+                //    printf("가입되었습니다.\n");
+                //    textcolor(WHITE);
+                //    c1 = 'a';   // 시작 화면으로 전환
+                //    break;
+                //}
                 strcpy(result, "");
                 break;
             case 'f':		// 진료 기록 확인 1 ( 동물등록번호 출력 )
@@ -558,14 +549,10 @@ unsigned WINAPI RecMsg(void* arg) {
                 textcolor(WHITE);
                 break;
             case 'e':		// 예약
-                w = atoi(strtok(NULL, "@"));
-                if (w == 0) {       // 날짜 중복시
-                    printf("예약이 중복됩니다.\n");
-                    c1 = 'e';       // 다시 예약 화면으로 전환 ( 초기화하여 )
-                }
-                textcolor(GREEN);
+                ee = atoi(strtok(NULL, "@"));
+                /*textcolor(GREEN);
                 printf("예약되었습니다.");
-                textcolor(WHITE);
+                textcolor(WHITE);*/
                 break;
             case 'u':		// 접종
                 textcolor(GREEN);

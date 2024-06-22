@@ -11,8 +11,9 @@ char c;				// 목록 코드
 char c1;				// 클라이언트 창 이동하기 위한 코드
 char rc;				// 수신받은 목록 코드
 char resercheck;	// 예약 날짜 중복 여부
-int loinNum;		// 로그인 확인 여부
+int loinNum, joinNum;		// 로그인 확인 여부
 int num;
+int ee;
 
 typedef struct today {	// 날짜 구조체
 	int year;					// 년
