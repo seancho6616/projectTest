@@ -40,7 +40,7 @@ char resercheck;	// 예약 날짜 중복 여부
 int q = 5;      //  반복 출력 시 사용할 Y값
 int q2 = 1;     // 출력 정보 카운트
 
-int loinNum; // 로그인 확인여부
+int loinNum=0; // 로그인 확인여부
 
 // 위치 이동 함수
 void gotoxy(int x, int y) {
@@ -253,3 +253,204 @@ void inoculation() {    // 접종
     c = 'u';
 }
 
+void beforInterface() {
+	int  conti = 1;
+	while (conti) {
+		switch (c1) {
+		case 'a':		//로그인 or 회원가입
+			system("cls");
+			startInterface();
+			switch (n) {
+			case 1:			// 로그인
+				system("cls");
+				fflush(stdin);
+				loginInterface();
+				gotoxy(3, 10);
+				c = 'l';
+				system("puase");
+				if (loinNum == 0) {
+					textcolor(RED);
+					gotoxy(3, 7);	 printf("아이디 또는 비밀번호를 잘못 입력했습니다.");
+					textcolor(WHITE);
+					system("pause");
+				}
+				else if (loinNum == 1) {
+					textcolor(GREEN);
+					gotoxy(3, 7);	printf("로그인 되었습니다");
+					textcolor(WHITE);
+					c1 = 'c';
+					conti = 0;
+				}
+				else if (loinNum == 2) {
+					textcolor(GREEN);
+					gotoxy(3, 7);	printf("로그인 되었습니다");
+					textcolor(WHITE);
+					c1 = 'm';
+					conti = 0;
+				}
+				break;
+			case 2:			//회원가입
+				system("cls");
+				joinInterface();
+				if (n == 1) {
+					c1 = 'j';		// 고객 회원가입 창으로 이동
+				}
+				else if (n == 2) {
+					c1 = 'o';		// 병원 회원가입 창으로 이동
+				}
+				break;
+			}
+			break;
+		case 'j':			//고객 회원가입
+			system("cls");
+			fflush(stdin);
+			joinClientInterface();
+			gotoxy(3, 12);
+			c = 'j';
+			c1 = 'a';
+			break;
+		case 'o':				//병원 가입
+			system("cls");
+			fflush(stdin);
+			joinManagerInterface();
+			c = 'o';
+			c1 = 'a';
+			break;
+		}
+	}
+}
+
+void clientInterface() {
+	while (1) {
+		system("cls");
+		fflush(stdin);				// 전에 있던 버퍼 초기화
+		cuMainScreen();			// 고객 메인목록 창
+		reservationBorder();	// 예약날짜 칸
+		q = 5;
+		q2 = 1;
+		reservationDate();		// 예약 날짜 확인 ( 다가오는 예약 날짜 )
+		gotoxy(3, 12);	printf(">  ");	scanf("%d", &num);
+		getchar();
+		switch (num) {
+		case 1:
+			system("cls");
+			fflush(stdin);
+			medicalRecordCheck();		// 고객 진료 기록 확인 창
+			gotoxy(3, 20);
+			system("pause");
+			//c1 = 'f';				// 진료 기록 확인 창으로 이동
+			break;
+		case 2:
+			system("cls");
+			fflush(stdin);
+			q = 5;
+			q2 = 1;
+			findReservation();				// 예약 내역 확인 창
+			c = 'b';
+			gotoxy(3, 20);
+			system("pause");
+			c1 = 'c';
+			c1 = 'b';				// 예약 내역 확인 창으로 이동
+			break;
+		case 3:
+			system("cls");
+			fflush(stdin);
+			corrInformation();		// 고객 정보 수정 및 탈퇴 창
+			editInformation();		// 정보 수정 및 탈퇴 기능
+			system("pause");
+			c1 = 'i';				// 정보 수정 및 탈퇴 창으로 이동
+			break;
+		case 4:
+			c = 'q';				// 종료
+			c1 = 'q';
+			break;
+		default:					// 해당 없는 값을 입력 받았을때
+			printf("\n\t다시입력\n");
+			system("pause");
+			break;
+		}
+		num = 0;
+		break;
+	}
+}
+
+void managerInterface() {
+	while (1) {
+		system("cls");
+		fflush(stdin);
+		mgMainScreen();		// 관리자( 병원 ) 메인목록 창
+		reservationBorder();	// 예약날짜 칸
+		q = 5;
+		q2 = 1;
+		todayReservation();		// 오늘 예약자 확인
+		gotoxy(3, 16);	printf(">  ");	scanf("%d", &num);
+		getchar();
+		switch (num) {
+		case 1:							// 진료 기록 창으로 전환
+			system("cls");
+			fflush(stdin);
+			medicalRecord();			// 병원 진료기록 창
+			hosptalRecode();			// 병원 진료기록 기능
+			gotoxy(3, 20);
+			system("pause");
+			break;
+		case 2:							// 반려동물 등록 창으로 전환
+			system("cls");
+			fflush(stdin);
+			addAnimal();					// 반려동물 등록 창
+			animalNum();
+			gotoxy(3, 20);
+			system("pause");
+			break;
+		case 3:							// 예약 및 접종 창으로 전환
+			system("cls");
+			fflush(stdin);
+			reservOrInocul();			// 예약 및 접종 창
+			n = 0;
+			scanf("%d", &n);
+			getchar();
+			if (n == 1) {
+				system("cls");
+				fflush(stdin);
+				reserv();					// 예약 창
+				reservation();				// 예약 정보 입력
+				gotoxy(3, 20);
+				system("pause");
+			}
+			else if (n == 2) {
+				system("cls");
+				fflush(stdin);
+				inocul();						// 접종 창
+				inoculation();				// 접종 정보 입력
+				gotoxy(3, 20);
+				system("pause");
+			}
+			break;
+		case 4:							// 환자 진료기록 확인
+			system("cls");
+			fflush(stdin);
+			gotoxy(3, 2);	printf("동물등록번호 : ");	gets(animNum);
+			system("cls");
+			myRecode2();
+			gotoxy(3, 20);
+			system("pause");
+			c1 = 'm';							// 병원 메인으로 전환
+			break;
+		case 5:									// 정보 수정 및 탈퇴
+			system("cls");
+			fflush(stdin);
+			corrInformation();		// 정보수정 및 탈퇴 창
+			editInformation();		// 정보 수정 및 탈퇴 기능
+			system("pause");
+			break;
+		case 6:									// 종료
+			c = 'q';
+			c1 = 'q';
+			break;
+		default:
+			printf("\n\t다시입력\n");		// 해당 없는 값을 입력 받았을때
+			system("pause");
+			break;
+		}
+	}
+}

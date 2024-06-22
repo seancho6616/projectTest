@@ -32,7 +32,7 @@ void main() {
 	char serverIp[100];
 	int  portNum;
 	todayDate();
-	strcpy(serverIp, "10.20.38.40");	// 임의로 설정
+	strcpy(serverIp, "192.168.0.9");	// 임의로 설정
 	portNum = 55555;		// 임의로 설정 " 55555 "
 
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -49,227 +49,239 @@ void main() {
 	sendThread = (HANDLE)_beginthreadex(NULL, 0, SendMsg, (void*)&sock, 0, NULL);		//메시지 전송용 쓰레드가 실행된다.
 	recvThread = (HANDLE)_beginthreadex(NULL, 0, RecMsg, (void*)&sock, 0, NULL);		//메시지 수신용 쓰레드가 실행된다.
 
-	while (1) {
-		switch (c1) {
-			case 'a':		//로그인 or 회원가입
-				system("cls");
-                startInterface();
-				switch (n) {
-					case 1:			// 로그인
-						system("cls");
-                        fflush(stdin);
-                        loginInterface();
-						gotoxy(3, 10);
-                        printf("%s\n%s\n", id, pw);
-                        c = 'l';
-                        printf("%c", c);
-                        sprintf(animNum, "%c@%s@%s",'c', id, pw);
-                        printf("%s\n", animNum);
-						//c1 = 'm'; 테스트용
-						break;
-					case 2:			//회원가입
-						system("cls");
-                        joinInterface();
-						if (n == 1) {
-							c1 = 'j';		// 고객 회원가입 창으로 이동
-						}
-						else if (n == 2) {
-							c1 = 'o';		// 병원 회원가입 창으로 이동
-						}
-						break;
-				}
-				break;
-			case 'j':			//고객 회원가입
-				system("cls");
-				fflush(stdin);
-                joinClientInterface();
-				gotoxy(3, 12);
-				c = 'j';
-				system("pause");
-				c1 = 'a';
-				break;
-			case 'o':				//병원 가입
-				system("cls");
-				fflush(stdin);
-                joinManagerInterface();
-				
-				gotoxy(3, 12);
-				c = 'o'; 
-				system("pause");
-				c1 = 'a';
-				break;
-			// 고객메인
-			case 'c':
-				system("cls");
-				fflush(stdin);				// 전에 있던 버퍼 초기화
-				cuMainScreen();			// 고객 메인목록 창
-				reservationBorder();	// 예약날짜 칸
-				q = 5;
-				q2 = 1; 
-				reservationDate();		// 예약 날짜 확인 ( 다가오는 예약 날짜 )
-				gotoxy(3, 12);	printf(">  ");	scanf("%d", &num);
-				getchar();
-				switch (num) {
-					case 1:
-						c1 = 'f';				// 진료 기록 확인 창으로 이동
-						break;
-					case 2:
-						c1 = 'b';				// 예약 내역 확인 창으로 이동
-						break;
-					case 3:
-						c1 = 'i';				// 정보 수정 및 탈퇴 창으로 이동
-						break;
-					case 4:
-						c = 'q';				// 종료
-						c1 = 'q';
-						break;
-					default:					// 해당 없는 값을 입력 받았을때
-						printf("\n\t다시입력\n");
-						system("pause");
-						break;
-				}
-				num = 0;
-				break;
+    beforInterface();
+    printf("%d", loinNum);
+    switch (loinNum) {
+        case 1:
+            clientInterface();
+            break;
+        case 2:
+            managerInterface();
+            break;
+    }
 
-			case 'f':			//진료기록확인
-				system("cls");
-				fflush(stdin);
-				medicalRecordCheck();		// 고객 진료 기록 확인 창
-				gotoxy(3, 20);
-				system("pause");
-				c1 = 'c';								// 메인으로 전환
-				break;
-			case 'b':
-				system("cls");
-				fflush(stdin);
-				q = 5;
-				q2 = 1; 
-				findReservation();				// 예약 내역 확인 창
-				c = 'b';
-				gotoxy(3, 20);
-				system("pause");
-				c1 = 'c';
-				break;
-			case 'i':			//고객정보수정및탈퇴
-				system("cls");
-				fflush(stdin);
-				corrInformation();		// 고객 정보 수정 및 탈퇴 창
-				editInformation();		// 정보 수정 및 탈퇴 기능
-				system("pause");
-				c1 = 'c';						// 메인으로 전환
-				break;
-			case 'm':		//병원메인
-				system("cls");
-				fflush(stdin);
-				mgMainScreen();		// 관리자( 병원 ) 메인목록 창
-				reservationBorder();	// 예약날짜 칸
-				q = 5;
-				q2 = 1;
-				todayReservation();		// 오늘 예약자 확인
-				gotoxy(3, 16);	printf(">  ");	scanf("%d", &num);
-				getchar();
-				switch (num) {
-				case 1:							// 진료 기록 창으로 전환
-					c1 = 'r';
-					break;
-				case 2:							// 반려동물 등록 창으로 전환
-					c1 = 'n';
-					break;
-				case 3:							// 예약 및 접종 창으로 전환
-					c1 = 'p';
-					break;
-				case 4:							// 환자 진료기록 확인
-					system("cls");
-					fflush(stdin);
-					gotoxy(3, 2);	printf("동물등록번호 : ");	gets(animNum);
-					system("cls");
-					myRecode2();
-					gotoxy(3, 20);
-					system("pause");
-					c1 = 'm';							// 병원 메인으로 전환
-					break;
-				case 5:									// 정보 수정 및 탈퇴
-					c1 = 't';
-					break;
-				case 6:									// 종료
-					c = 'q';
-					c1 = 'q';
-					break;
-				default:
-					printf("\n\t다시입력\n");		// 해당 없는 값을 입력 받았을때
-					system("pause");
-					break;
-				}
-				break;
-			case 'r':			//병원진료기록
-				system("cls");
-				fflush(stdin);
-				medicalRecord();			// 병원 진료기록 창
-				hosptalRecode();			// 병원 진료기록 기능
-				gotoxy(3, 20);
-				system("pause");
-				c1 = 'm';						// 병원 메인으로 전환
-				break;
-			case 'n':		//반려동물 등록
-				system("cls");
-				fflush(stdin);
-				addAnimal();					// 반려동물 등록 창
-				animalNum();
-				gotoxy(3, 20);
-				system("pause");
-				c1 = 'm';						// 병원 메인으로 전환
-				break;
-			case 'p':			//진료예약및접좁
-				system("cls");
-				fflush(stdin);
-				reservOrInocul();			// 예약 및 접종 창
-				n = 0;
-				scanf("%d", &n);
-				getchar();
-				if (n == 1) 
-					c1 = 'e';						// n==1 이면 예약창으로
-				else if (n == 2) 
-					c1 = 'u';						// n==2이면 접종창으로 
-				break;
 
-				//예약
-			case 'e':
-				system("cls");
-				fflush(stdin);
-				reserv();					// 예약 창
-				reservation();				// 예약 정보 입력
-				gotoxy(3, 20);
-				system("pause");
-				c1 = 'm';						// 병원 메인으로 전환
-				break;
+	//while (1) {
+	//	switch (c1) {
+	//		case 'a':		//로그인 or 회원가입
+	//			system("cls");
+ //               startInterface();
+	//			switch (n) {
+	//				case 1:			// 로그인
+	//					system("cls");
+ //                       fflush(stdin);
+ //                       loginInterface();
+	//					gotoxy(3, 10);
+ //                       printf("%s\n%s\n", id, pw);
+ //                       c = 'l';
+ //                       printf("%c", c);
+ //                       sprintf(animNum, "%c@%s@%s",'c', id, pw);
+ //                       printf("%s\n", animNum);
+	//					//c1 = 'm'; 테스트용
+	//					break;
+	//				case 2:			//회원가입
+	//					system("cls");
+ //                       joinInterface();
+	//					if (n == 1) {
+	//						c1 = 'j';		// 고객 회원가입 창으로 이동
+	//					}
+	//					else if (n == 2) {
+	//						c1 = 'o';		// 병원 회원가입 창으로 이동
+	//					}
+	//					break;
+	//			}
+	//			break;
+	//		case 'j':			//고객 회원가입
+	//			system("cls");
+	//			fflush(stdin);
+ //               joinClientInterface();
+	//			gotoxy(3, 12);
+	//			c = 'j';
+	//			system("pause");
+	//			c1 = 'a';
+	//			break;
+	//		case 'o':				//병원 가입
+	//			system("cls");
+	//			fflush(stdin);
+ //               joinManagerInterface();
+	//			
+	//			gotoxy(3, 12);
+	//			c = 'o'; 
+	//			system("pause");
+	//			c1 = 'a';
+	//			break;
+	//		// 고객메인
+	//		case 'c':
+	//			system("cls");
+	//			fflush(stdin);				// 전에 있던 버퍼 초기화
+	//			cuMainScreen();			// 고객 메인목록 창
+	//			reservationBorder();	// 예약날짜 칸
+	//			q = 5;
+	//			q2 = 1; 
+	//			reservationDate();		// 예약 날짜 확인 ( 다가오는 예약 날짜 )
+	//			gotoxy(3, 12);	printf(">  ");	scanf("%d", &num);
+	//			getchar();
+	//			switch (num) {
+	//				case 1:
+	//					c1 = 'f';				// 진료 기록 확인 창으로 이동
+	//					break;
+	//				case 2:
+	//					c1 = 'b';				// 예약 내역 확인 창으로 이동
+	//					break;
+	//				case 3:
+	//					c1 = 'i';				// 정보 수정 및 탈퇴 창으로 이동
+	//					break;
+	//				case 4:
+	//					c = 'q';				// 종료
+	//					c1 = 'q';
+	//					break;
+	//				default:					// 해당 없는 값을 입력 받았을때
+	//					printf("\n\t다시입력\n");
+	//					system("pause");
+	//					break;
+	//			}
+	//			num = 0;
+	//			break;
 
-				//접종
-			case 'u':
-				system("cls");
-				fflush(stdin);
-				inocul();						// 접종 창
-				inoculation();				// 접종 정보 입력
-				gotoxy(3, 20);
-				system("pause");
-				c1 = 'm';						// 병원 메인으로 전환
-				break;
+	//		case 'f':			//진료기록확인
+	//			system("cls");
+	//			fflush(stdin);
+	//			medicalRecordCheck();		// 고객 진료 기록 확인 창
+	//			gotoxy(3, 20);
+	//			system("pause");
+	//			c1 = 'c';								// 메인으로 전환
+	//			break;
+	//		case 'b':
+	//			system("cls");
+	//			fflush(stdin);
+	//			q = 5;
+	//			q2 = 1; 
+	//			findReservation();				// 예약 내역 확인 창
+	//			c = 'b';
+	//			gotoxy(3, 20);
+	//			system("pause");
+	//			c1 = 'c';
+	//			break;
+	//		case 'i':			//고객정보수정및탈퇴
+	//			system("cls");
+	//			fflush(stdin);
+	//			corrInformation();		// 고객 정보 수정 및 탈퇴 창
+	//			editInformation();		// 정보 수정 및 탈퇴 기능
+	//			system("pause");
+	//			c1 = 'c';						// 메인으로 전환
+	//			break;
+	//		case 'm':		//병원메인
+	//			system("cls");
+	//			fflush(stdin);
+	//			mgMainScreen();		// 관리자( 병원 ) 메인목록 창
+	//			reservationBorder();	// 예약날짜 칸
+	//			q = 5;
+	//			q2 = 1;
+	//			todayReservation();		// 오늘 예약자 확인
+	//			gotoxy(3, 16);	printf(">  ");	scanf("%d", &num);
+	//			getchar();
+	//			switch (num) {
+	//			case 1:							// 진료 기록 창으로 전환
+	//				c1 = 'r';
+	//				break;
+	//			case 2:							// 반려동물 등록 창으로 전환
+	//				c1 = 'n';
+	//				break;
+	//			case 3:							// 예약 및 접종 창으로 전환
+	//				c1 = 'p';
+	//				break;
+	//			case 4:							// 환자 진료기록 확인
+	//				system("cls");
+	//				fflush(stdin);
+	//				gotoxy(3, 2);	printf("동물등록번호 : ");	gets(animNum);
+	//				system("cls");
+	//				myRecode2();
+	//				gotoxy(3, 20);
+	//				system("pause");
+	//				c1 = 'm';							// 병원 메인으로 전환
+	//				break;
+	//			case 5:									// 정보 수정 및 탈퇴
+	//				c1 = 't';
+	//				break;
+	//			case 6:									// 종료
+	//				c = 'q';
+	//				c1 = 'q';
+	//				break;
+	//			default:
+	//				printf("\n\t다시입력\n");		// 해당 없는 값을 입력 받았을때
+	//				system("pause");
+	//				break;
+	//			}
+	//			break;
+	//		case 'r':			//병원진료기록
+	//			system("cls");
+	//			fflush(stdin);
+	//			medicalRecord();			// 병원 진료기록 창
+	//			hosptalRecode();			// 병원 진료기록 기능
+	//			gotoxy(3, 20);
+	//			system("pause");
+	//			c1 = 'm';						// 병원 메인으로 전환
+	//			break;
+	//		case 'n':		//반려동물 등록
+	//			system("cls");
+	//			fflush(stdin);
+	//			addAnimal();					// 반려동물 등록 창
+	//			animalNum();
+	//			gotoxy(3, 20);
+	//			system("pause");
+	//			c1 = 'm';						// 병원 메인으로 전환
+	//			break;
+	//		case 'p':			//진료예약및접좁
+	//			system("cls");
+	//			fflush(stdin);
+	//			reservOrInocul();			// 예약 및 접종 창
+	//			n = 0;
+	//			scanf("%d", &n);
+	//			getchar();
+	//			if (n == 1) 
+	//				c1 = 'e';						// n==1 이면 예약창으로
+	//			else if (n == 2) 
+	//				c1 = 'u';						// n==2이면 접종창으로 
+	//			break;
 
-				//병원 정보수정 및 탈퇴
-			case 't':
-				system("cls");
-				fflush(stdin);
-				corrInformation();		// 정보수정 및 탈퇴 창
-				editInformation();		// 정보 수정 및 탈퇴 기능
-				system("pause");
-				c1 = 'm';						// 병원 메인으로 전환
-				break;
-			case 'q':
-				c = 'q';
-				gotoxy(3, 20);
-				printf("종료되었습니다");
-				exit(0);
-		}
-	}
+	//			//예약
+	//		case 'e':
+	//			system("cls");
+	//			fflush(stdin);
+	//			reserv();					// 예약 창
+	//			reservation();				// 예약 정보 입력
+	//			gotoxy(3, 20);
+	//			system("pause");
+	//			c1 = 'm';						// 병원 메인으로 전환
+	//			break;
+
+	//			//접종
+	//		case 'u':
+	//			system("cls");
+	//			fflush(stdin);
+	//			inocul();						// 접종 창
+	//			inoculation();				// 접종 정보 입력
+	//			gotoxy(3, 20);
+	//			system("pause");
+	//			c1 = 'm';						// 병원 메인으로 전환
+	//			break;
+
+	//			//병원 정보수정 및 탈퇴
+	//		case 't':
+	//			system("cls");
+	//			fflush(stdin);
+	//			corrInformation();		// 정보수정 및 탈퇴 창
+	//			editInformation();		// 정보 수정 및 탈퇴 기능
+	//			system("pause");
+	//			c1 = 'm';						// 병원 메인으로 전환
+	//			break;
+	//		case 'q':
+	//			c = 'q';
+	//			gotoxy(3, 20);
+	//			printf("종료되었습니다");
+	//			exit(0);
+	//	}
+	//}
 
 	WaitForSingleObject(sendThread, INFINITE);//전송용 쓰레드가 중지될때까지 기다린다./
 	WaitForSingleObject(recvThread, INFINITE);//수신용 쓰레드가 중지될때까지 기다린다.
@@ -408,45 +420,45 @@ unsigned WINAPI RecMsg(void* arg) {
                 loinNum = atoi(strtok(NULL, "@"));
                 printf("%d\n", loinNum);
                 printf("loinNum : %d\n", loinNum);
-                switch (loinNum) {
-                case 0:     // 로그인 실패
-                    gotoxy(3, 7);
-                    textcolor(RED);
-                    printf("아이디 또는 비밀번호를 잘못 입력했습니다.");
-                    textcolor(WHITE);
-                    system("pause");
-                    c1 = 'a';
-                    printf("%c\n", c1);
-                    rc = '\0';
-                    strcpy(result, ""); 
-                    break;
-                case 1:     // 고객으로 로그인
-                  /*  strcpy(client.name, strtok(NULL, "@"));
-                    strcpy(client.num, strtok(NULL, "@"));
-                    strcpy(client.id, strtok(NULL, "@"));
-                    strcpy(client.pw, strtok(NULL, "@"));*/
-                    textcolor(GREEN);
-                    printf("로그인 되었습니다");
-                    textcolor(WHITE);
-                    c1 = 'c';
-                    printf("%c\n", c1);
-                    //rc = '\0';
-                    strcpy(result, ""); 
-                    break;
-                case 2:     // 관리자 ( 병원 )으로 로그인
-                    strcpy(manager.name, strtok(NULL, "@"));
-                    strcpy(manager.lo.city, strtok(NULL, "@"));
-                    strcpy(manager.lo.dong, strtok(NULL, "@"));
-                    strcpy(manager.id, strtok(NULL, "@"));
-                    strcpy(manager.pw, strtok(NULL, "@"));
-                    textcolor(GREEN);
-                    printf("로그인 되었습니다");
-                    textcolor(WHITE);
-                    c1 = 'm';
-                    rc = '\0';
-                    strcpy(result, ""); 
-                    break;
-                }
+                //switch (loinNum) {
+                //case 0:     // 로그인 실패
+                //    gotoxy(3, 7);
+                //    textcolor(RED);
+                //    printf("아이디 또는 비밀번호를 잘못 입력했습니다.");
+                //    textcolor(WHITE);
+                //    system("pause");
+                //    c1 = 'a';
+                //    printf("%c\n", c1);
+                //    rc = '\0';
+                //    strcpy(result, ""); 
+                //    break;
+                //case 1:     // 고객으로 로그인
+                //    strcpy(client.name, strtok(NULL, "@"));
+                //    strcpy(client.num, strtok(NULL, "@"));
+                //    strcpy(client.id, strtok(NULL, "@"));
+                //    strcpy(client.pw, strtok(NULL, "@"));
+                //    textcolor(GREEN);
+                //    printf("로그인 되었습니다");
+                //    textcolor(WHITE);
+                //    c1 = 'c';
+                //    printf("%c\n", c1);
+                //    //rc = '\0';
+                //    strcpy(result, ""); 
+                //    break;
+                //case 2:     // 관리자 ( 병원 )으로 로그인
+                //    strcpy(manager.name, strtok(NULL, "@"));
+                //    strcpy(manager.lo.city, strtok(NULL, "@"));
+                //    strcpy(manager.lo.dong, strtok(NULL, "@"));
+                //    strcpy(manager.id, strtok(NULL, "@"));
+                //    strcpy(manager.pw, strtok(NULL, "@"));
+                //    textcolor(GREEN);
+                //    printf("로그인 되었습니다");
+                //    textcolor(WHITE);
+                //    c1 = 'm';
+                //    rc = '\0';
+                //    strcpy(result, ""); 
+                //    break;
+                //}
                 break;
             case 'j':		// 고객 회원가입
                 w = atoi(strtok(NULL, "@"));

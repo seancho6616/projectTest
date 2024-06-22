@@ -107,4 +107,8 @@ void reservation();				// 예약
 
 void inoculation();				// 접종
 
+void beforInterface();			// 첫 시작화면
 
+void clientInterface();			// 고객 클라이언트 화면
+
+void managerInterface();		// 관리자 클라이언트 화면
